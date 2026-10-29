@@ -1,0 +1,45 @@
+rules:
+  - id: lab-sqli-string-concat
+    languages: [python]
+    severity: ERROR
+    message: >
+      SQL query built by string concatenation. Use a parameterised query:
+      conn.execute("... WHERE x = ?", (value,)).
+    patterns:
+      - pattern: $CONN.execute("..." + $X)
+
+  - id: lab-subprocess-shell-true
+    languages: [python]
+    severity: ERROR
+    message: >
+      subprocess called with shell=True on a non-literal command enables OS
+      command injection. Use an argument list with shell=False and validate input.
+    patterns:
+      - pattern: subprocess.run(..., shell=True, ...)
+
+  - id: lab-pickle-loads
+    languages: [python]
+    severity: ERROR
+    message: >
+      pickle.loads on untrusted data allows remote code execution. Use a
+      data-only format such as json.
+    patterns:
+      - pattern: pickle.loads(...)
+
+  - id: lab-md5-password
+    languages: [python]
+    severity: WARNING
+    message: >
+      MD5 is unsuitable for password storage. Use a salted, slow hash
+      (bcrypt/scrypt/argon2/pbkdf2).
+    patterns:
+      - pattern: hashlib.md5(...)
+
+  - id: lab-urlopen-unvalidated
+    languages: [python]
+    severity: WARNING
+    message: >
+      urlopen on a user-controlled URL can cause SSRF. Allowlist the scheme and
+      reject private/loopback/link-local addresses.
+    patterns:
+      - pattern: urllib.request.urlopen($U, ...)
