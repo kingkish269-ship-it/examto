@@ -1,0 +1,32 @@
+[
+  {
+    "group_id": "sg-web",
+    "name": "public-web",
+    "rules": [
+      {"protocol": "tcp", "from_port": 443, "to_port": 443, "cidr": "0.0.0.0/0"},
+      {"protocol": "tcp", "from_port": 22, "to_port": 22, "cidr": "10.0.0.0/8"}
+    ]
+  },
+  {
+    "group_id": "sg-admin",
+    "name": "admin-access",
+    "rules": [
+      {"protocol": "tcp", "from_port": 22, "to_port": 22, "cidr": "0.0.0.0/0"},
+      {"protocol": "tcp", "from_port": 3389, "to_port": 3389, "cidr": "0.0.0.0/0"}
+    ]
+  },
+  {
+    "group_id": "sg-database",
+    "name": "database",
+    "rules": [
+      {"protocol": "tcp", "from_port": 5432, "to_port": 5432, "cidr": "10.20.0.0/16"}
+    ]
+  },
+  {
+    "group_id": "sg-all",
+    "name": "temporary-test",
+    "rules": [
+      {"protocol": "-1", "from_port": null, "to_port": null, "cidr": "0.0.0.0/0"}
+    ]
+  }
+]

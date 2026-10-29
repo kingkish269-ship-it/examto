@@ -1,0 +1,10 @@
+{
+  "first": {
+    "items": [{"id": "A-1"}, {"id": "A-2"}],
+    "next_token": "second"
+  },
+  "second": {
+    "items": [{"id": "A-3"}],
+    "next_token": null
+  }
+}
