@@ -1,0 +1,8 @@
+{
+  "Results": [
+    {"Target": "app:latest (debian 12)", "Vulnerabilities": [
+      {"VulnerabilityID": "CVE-2023-0001", "PkgName": "openssl", "Severity": "CRITICAL"},
+      {"VulnerabilityID": "CVE-2023-0002", "PkgName": "zlib", "Severity": "MEDIUM"}
+    ]}
+  ]
+}

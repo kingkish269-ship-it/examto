@@ -1,0 +1,8 @@
+[
+  {"name": "requests", "affected": ["2.19.0"], "fixed": "2.20.0", "severity": "HIGH",
+   "id": "CVE-2018-18074", "summary": "credentials leak on redirect"},
+  {"name": "pyyaml", "affected": ["5.3"], "fixed": "5.4", "severity": "CRITICAL",
+   "id": "CVE-2020-14343", "summary": "arbitrary code execution via full_load"},
+  {"name": "urllib3", "affected": ["1.26.5"], "fixed": "1.26.17", "severity": "MEDIUM",
+   "id": "CVE-2023-43804", "summary": "cookie leak on cross-origin redirect"}
+]

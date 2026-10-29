@@ -41,3 +41,14 @@ jobs:
           else
             echo "appsec-lab not present on this branch; skipping."
           fi
+
+      - name: Advanced labs (stdlib unittest)
+        run: |
+          for lab in cloud-security-lab iac-security-lab container-k8s-lab supply-chain-lab devsecops-lab; do
+            if [ -d "$lab" ]; then
+              echo "== $lab =="
+              ( cd "$lab" && python -m unittest discover -v )
+            else
+              echo "$lab not present on this branch; skipping."
+            fi
+          done

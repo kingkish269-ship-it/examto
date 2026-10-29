@@ -1,0 +1,39 @@
+{
+  "s3_buckets": [
+    {"name": "public-marketing-assets", "public": true, "public_access_block": false, "encryption": true},
+    {"name": "customer-exports", "public": false, "public_access_block": true, "encryption": false},
+    {"name": "app-logs", "public": false, "public_access_block": true, "encryption": true}
+  ],
+  "security_groups": [
+    {"id": "sg-web", "name": "web", "ingress": [
+      {"protocol": "tcp", "from_port": 443, "to_port": 443, "cidr": "0.0.0.0/0"}
+    ]},
+    {"id": "sg-admin", "name": "admin", "ingress": [
+      {"protocol": "tcp", "from_port": 22, "to_port": 22, "cidr": "0.0.0.0/0"},
+      {"protocol": "tcp", "from_port": 3389, "to_port": 3389, "cidr": "0.0.0.0/0"}
+    ]},
+    {"id": "sg-legacy", "name": "legacy", "ingress": [
+      {"protocol": "-1", "from_port": null, "to_port": null, "cidr": "0.0.0.0/0"}
+    ]}
+  ],
+  "iam_policies": [
+    {"name": "break-glass-admin", "document": {"Statement": [
+      {"Effect": "Allow", "Action": "*", "Resource": "*"}
+    ]}},
+    {"name": "ci-deployer", "document": {"Statement": [
+      {"Effect": "Allow", "Action": "*", "Resource": "arn:aws:s3:::build-artifacts/*"}
+    ]}},
+    {"name": "read-only-metrics", "document": {"Statement": [
+      {"Effect": "Allow", "Action": "cloudwatch:GetMetricData", "Resource": "*"}
+    ]}}
+  ],
+  "ebs_volumes": [
+    {"id": "vol-0a1b2c", "encrypted": false},
+    {"id": "vol-0d4e5f", "encrypted": true}
+  ],
+  "rds_instances": [
+    {"id": "orders-db", "publicly_accessible": true, "storage_encrypted": false},
+    {"id": "analytics-db", "publicly_accessible": false, "storage_encrypted": true}
+  ],
+  "cloudtrail": {"enabled": false}
+}

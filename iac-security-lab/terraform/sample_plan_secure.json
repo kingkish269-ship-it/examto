@@ -1,0 +1,21 @@
+{
+  "planned_values": {
+    "root_module": {
+      "resources": [
+        {"address": "aws_s3_bucket.data", "type": "aws_s3_bucket", "name": "data",
+         "values": {"acl": "private"}},
+        {"address": "aws_s3_bucket_public_access_block.data", "type": "aws_s3_bucket_public_access_block", "name": "data",
+         "values": {"block_public_acls": true, "block_public_policy": true,
+                    "ignore_public_acls": true, "restrict_public_buckets": true}},
+        {"address": "aws_security_group.admin", "type": "aws_security_group", "name": "admin",
+         "values": {"ingress": [
+           {"from_port": 22, "to_port": 22, "protocol": "tcp", "cidr_blocks": ["10.0.0.0/8"]}
+         ]}},
+        {"address": "aws_db_instance.orders", "type": "aws_db_instance", "name": "orders",
+         "values": {"publicly_accessible": false, "storage_encrypted": true}},
+        {"address": "aws_ebs_volume.scratch", "type": "aws_ebs_volume", "name": "scratch",
+         "values": {"encrypted": true}}
+      ]
+    }
+  }
+}

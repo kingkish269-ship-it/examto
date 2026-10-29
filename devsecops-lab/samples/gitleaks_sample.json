@@ -1,0 +1,3 @@
+[
+  {"RuleID": "aws-access-key", "File": "config/settings.py", "StartLine": 12}
+]
