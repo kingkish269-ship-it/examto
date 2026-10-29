@@ -1,0 +1,43 @@
+name: CI
+
+# Runs the test suites for whichever labs are present on the branch.
+# Scoped to least privilege: read-only, no secrets referenced.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Python security lab (stdlib unittest)
+        run: |
+          if [ -d python-security-lab ]; then
+            cd python-security-lab
+            python -m unittest discover -v
+          else
+            echo "python-security-lab not present on this branch; skipping."
+          fi
+
+      - name: AppSec lab (pytest)
+        run: |
+          if [ -d appsec-lab ]; then
+            cd appsec-lab
+            python -m pip install --upgrade pip
+            pip install -r requirements.txt
+            pytest tests/ -v
+          else
+            echo "appsec-lab not present on this branch; skipping."
+          fi
