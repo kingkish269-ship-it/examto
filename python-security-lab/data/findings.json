@@ -1,0 +1,37 @@
+[
+  {
+    "id": "F-001",
+    "title": "Public storage bucket",
+    "severity": "CRITICAL",
+    "status": "OPEN",
+    "resource": {"type": "storage", "name": "customer-exports"}
+  },
+  {
+    "id": "F-002",
+    "title": "MFA disabled for privileged user",
+    "severity": "HIGH",
+    "status": "OPEN",
+    "resource": {"type": "identity", "name": "legacy-admin"}
+  },
+  {
+    "id": "F-003",
+    "title": "Old TLS policy",
+    "severity": "MEDIUM",
+    "status": "ACCEPTED",
+    "resource": {"type": "load-balancer", "name": "legacy-api"}
+  },
+  {
+    "id": "F-004",
+    "title": "Unencrypted database backup",
+    "severity": "HIGH",
+    "status": "OPEN",
+    "resource": {"type": "database", "name": "orders-backup"}
+  },
+  {
+    "id": "F-005",
+    "title": "Verbose logging enabled",
+    "severity": "LOW",
+    "status": "RESOLVED",
+    "resource": {"type": "application", "name": "portal"}
+  }
+]
