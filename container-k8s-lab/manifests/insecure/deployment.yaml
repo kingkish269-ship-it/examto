@@ -1,0 +1,21 @@
+# INSECURE Kubernetes Deployment for study. Do not apply to a real cluster.
+# Every issue here is flagged by validator/k8s_audit.py and by Kyverno.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: app}
+  template:
+    metadata:
+      labels: {app: app}
+    spec:
+      hostNetwork: true            # HIGH
+      containers:
+        - name: app
+          image: myapp:latest      # MEDIUM: mutable tag
+          securityContext:
+            privileged: true        # CRITICAL
+          # no runAsNonRoot, no readOnlyRootFilesystem, no dropped caps, no limits

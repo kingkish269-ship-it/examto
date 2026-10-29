@@ -1,0 +1,54 @@
+# REFERENCE DevSecOps pipeline. Copy into a project's .github/workflows/ and
+# adapt. Kept out of this repo's live .github/ on purpose so it does not require
+# the external tools to be installed here.
+#
+# Security notes baked in:
+#  - least-privilege permissions (read-only by default)
+#  - no step dumps the environment
+#  - the gate makes the release decision from aggregated findings
+
+name: devsecops
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Secret scan (Gitleaks)
+        uses: gitleaks/gitleaks-action@v2
+        continue-on-error: true
+
+      - name: SAST (Semgrep)
+        run: |
+          pip install semgrep
+          semgrep --config auto --json --output semgrep.json . || true
+
+      - name: Dependency & container scan (Trivy)
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: fs
+          format: json
+          output: trivy.json
+        continue-on-error: true
+
+      - name: Generate SBOM (Syft)
+        uses: anchore/sbom-action@v0
+        with:
+          format: cyclonedx-json
+          output-file: sbom.json
+
+      - name: Policy gate (block on HIGH+)
+        run: |
+          python3 devsecops-lab/gate/run_gate.py \
+            --semgrep semgrep.json \
+            --trivy trivy.json \
+            --fail-on HIGH

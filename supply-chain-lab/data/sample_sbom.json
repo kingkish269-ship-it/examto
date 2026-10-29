@@ -1,0 +1,11 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.5",
+  "components": [
+    {"type": "library", "name": "flask", "version": "3.0.0", "purl": "pkg:pypi/flask@3.0.0"},
+    {"type": "library", "name": "requests", "version": "2.19.0", "purl": "pkg:pypi/requests@2.19.0"},
+    {"type": "library", "name": "pyyaml", "version": "5.3", "purl": "pkg:pypi/pyyaml@5.3"},
+    {"type": "library", "name": "urllib3", "version": "1.26.5", "purl": "pkg:pypi/urllib3@1.26.5"},
+    {"type": "library", "name": "internal-utils", "purl": "pkg:pypi/internal-utils"}
+  ]
+}

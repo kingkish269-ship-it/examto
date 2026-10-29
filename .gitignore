@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+*.sqlite
+reports/
+report.csv
+appsec_pwned_*
+.DS_Store
