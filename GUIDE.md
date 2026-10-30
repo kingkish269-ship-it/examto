@@ -99,11 +99,26 @@ If the terminal feels unfamiliar, run the browser dashboard instead:
 python3 dashboard.py
 ```
 
-In a Codespace a popup offers to open the forwarded **port 5000** — click it (or
-open the **Ports** tab and click the globe). You get a web page listing every
-task with a progress bar; read the current task, copy its command into a
-terminal, then press **Run check** to be graded. It shares progress with
-`coach.py`, so you can switch between them freely.
+In a Codespace a popup offers to open the forwarded **port 5000** — click
+**Open in Browser**, or (better for the layout below) **Preview in Editor**.
+
+You get a task panel: the current task's lesson, the exact commands to run, and
+either a **Run check** button or — for the CTF — a **flag-submission box** with
+per-challenge hints. It shares progress with `coach.py`.
+
+### TryHackMe-style split: instructions left, terminal right
+
+1. Run `python3 dashboard.py`.
+2. On the port popup choose **Preview in Editor** (opens the dashboard as an
+   editor tab, not a separate browser window).
+3. Drag that tab to the **left** half of the editor.
+4. Open a terminal (`Ctrl+\`` or Terminal menu). To put it on the right, click
+   the `...` on the terminal panel → **Move Panel Right** (or just use the
+   bottom terminal).
+
+Now you read the task on the left and run the lab commands on the right —
+the TryHackMe layout. For the CTF: start the target in the terminal, exploit it,
+then paste the `FLAG{...}` into the box on the left and press **Submit**.
 
 ### Absolute beginner, want fully graphical lessons?
 
