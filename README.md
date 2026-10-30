@@ -1,5 +1,10 @@
 # Security Engineering Career Lab
 
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/kingkish269-ship-it/examto)
+
+**Run it entirely in your browser — no local setup.** Click the badge above to
+open a Codespace; it auto-installs everything, then run `python3 coach.py`.
+
 Hands-on labs for building the practical skills behind senior cloud, product, and
 DevSecOps security roles. Everything uses free, open-source tooling. No paid
 service, cloud account, or subscription is required to start.

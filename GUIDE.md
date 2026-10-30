@@ -43,14 +43,18 @@ If you don't want to install anything locally, open the repo in a **GitHub
 Codespace** — a full Linux dev machine in your browser with Python and git
 already there.
 
-1. On the repo page, click **Code → Codespaces → Create codespace on main**.
-2. Wait for it to load, then in its terminal:
+1. On the repo page, click **Code → Codespaces → Create codespace on main**
+   (or click the **Open in GitHub Codespaces** badge in the README).
+2. Wait for it to finish setting up. A dev container
+   (`.devcontainer/`) runs automatically and installs everything — including
+   the virtual environments for the Flask labs — so there is nothing to set up
+   by hand. When it's ready, in the terminal:
    ```bash
    python3 coach.py        # start the program immediately
    ```
-3. The Flask labs work too: run their venv setup (section 6). To play the CTF,
-   start the target, then open the **forwarded port** popup Codespaces shows,
-   or use `curl` inside the same terminal.
+3. The Flask labs are already set up (the dev container did it). To play the
+   CTF, start the target, then open the **forwarded port** popup Codespaces
+   shows, or use `curl` inside the same terminal.
 
 Good to know:
 
