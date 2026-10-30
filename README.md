@@ -4,6 +4,9 @@ Hands-on labs for building the practical skills behind senior cloud, product, an
 DevSecOps security roles. Everything uses free, open-source tooling. No paid
 service, cloud account, or subscription is required to start.
 
+> **New here? Read [`START_HERE.md`](START_HERE.md)** — it sequences all eight
+> labs into one program with a week-by-week plan and a progress checklist.
+
 Built for an engineer already strong in endpoint, network, cloud, and data
 security who wants demonstrable automation, application security, and DevSecOps
 skill. Each lab's core logic is tested so you can prove it works.
