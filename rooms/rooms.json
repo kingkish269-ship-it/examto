@@ -1,0 +1,47 @@
+[
+  {
+    "id": "tm",
+    "title": "Threat Modeling \u2014 STRIDE",
+    "topic": "threat modeling",
+    "dir": "threat-modeling",
+    "task": "Which STRIDE category is a forgeable 'admin:admin' session token? Submit one word.",
+    "hint": "The attacker pretends to be someone they are not.",
+    "answer_sha256": "a28d0cfe57e63557d391b2c693ee3abd6f6472ce35d5d78a952f2ddcb253fbd0"
+  },
+  {
+    "id": "sast",
+    "title": "SAST \u2014 find the bug in source",
+    "topic": "SAST",
+    "dir": "sast",
+    "task": "Run rooms/sast/scan.py on vulnerable_example.py. What vulnerability class (two words) does it report?",
+    "hint": "shell=True with user input.",
+    "answer_sha256": "5e8e5af630e323f31857c1cc395ce98e2bf222272a7adf06b13a4ba4154b1893"
+  },
+  {
+    "id": "dast",
+    "title": "DAST \u2014 attack the running app",
+    "topic": "DAST",
+    "dir": "dast",
+    "task": "Attack /greet with a <script> payload on the appsec app. OWASP 3-letter abbreviation?",
+    "hint": "Reflected script in the page.",
+    "answer_sha256": "58e0413224af6b6d3505dd1819d02491c34588de7a4dc6a9ad48a8f7e08e2f7b"
+  },
+  {
+    "id": "appsec",
+    "title": "AppSec \u2014 capture a real flag",
+    "topic": "application security",
+    "dir": "appsec",
+    "task": "Exploit the IDOR on the CTF target (GET /api/account/3) and paste the FLAG{...}.",
+    "hint": "Read the admin account id 3; the flag is in secret_note.",
+    "answer_sha256": "02f6808c96e8e9d4e3d9fd380de47dbff18635039f88ab5b4bf1dc8e98cd5cae"
+  },
+  {
+    "id": "cicd",
+    "title": "CI/CD Security \u2014 the release gate",
+    "topic": "DevSecOps / CI-CD",
+    "dir": "cicd",
+    "task": "Run the devsecops gate on the samples with --fail-on HIGH. What exit code blocks the release?",
+    "hint": "Non-zero means stop.",
+    "answer_sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+  }
+]
