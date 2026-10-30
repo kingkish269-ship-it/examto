@@ -42,6 +42,17 @@ jobs:
             echo "appsec-lab not present on this branch; skipping."
           fi
 
+      - name: CTF lab (pytest)
+        run: |
+          if [ -d ctf-lab ]; then
+            cd ctf-lab
+            python -m pip install --upgrade pip
+            pip install -r requirements.txt
+            pytest tests/ -v
+          else
+            echo "ctf-lab not present on this branch; skipping."
+          fi
+
       - name: Advanced labs (stdlib unittest)
         run: |
           for lab in cloud-security-lab iac-security-lab container-k8s-lab supply-chain-lab devsecops-lab; do
