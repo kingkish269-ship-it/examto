@@ -5,12 +5,18 @@ yourself or a small group. What you cannot get for free is the full commercial
 model — per-user isolated attack VMs plus a VPN at scale — because that burns
 real compute and costs money. Below is what is realistically free.
 
+> Free-tier details verified October 2026. These change often — always confirm
+> on the provider's own page before relying on them.
+
 ## Truly free, always-on (best option)
 
-**Oracle Cloud Always Free.** Oracle's free tier includes Arm-based compute and
-small x86 instances that stay free indefinitely, which is enough to run Docker
-plus a CTF platform for a small group. This is the closest thing to a free
-always-on server. See the [Oracle Cloud Free Tier](https://www.oracle.com/cloud/free/).
+**Oracle Cloud Always Free.** Still the only major provider with a genuinely
+permanent (no trial expiry) always-free VM. As of June 15, 2026 the Arm Ampere
+A1 allowance was halved: roughly **2 OCPUs and 12 GB RAM** running continuously
+(the docs state 1,500 OCPU-hours and 9,000 GB-hours per month), plus two small
+AMD VMs. That is still comfortably enough to run Docker plus a CTF platform for
+a small group. See the [Oracle Cloud Free Tier](https://www.oracle.com/cloud/free/)
+and the [Always Free docs](https://docs.oracle.com/iaas/Content/FreeTier/freetier_topic-Always_Free_Resources.htm).
 Content was rephrased for licensing compliance.
 
 On that VM you can run:
@@ -20,19 +26,31 @@ On that VM you can run:
   Compose.
 - This lab's target app, in a container, as one or more challenges.
 
-## Free trials and limited free tiers (not permanent)
+## Credits and trials (temporary, not permanent)
 
-- **Google Cloud** has an always-free small VM in some regions plus a trial
-  credit; **AWS** gives a 12-month micro instance; **Azure** gives a credit and
-  some always-free services. Good to start, but trials expire.
-  Check each provider's current free-tier page before relying on it.
+Verified October 2026:
 
-## Free ephemeral environments (great for practice, not hosting)
+- **AWS** replaced the old 12-month free tier (July 2025) with a credits model:
+  a new account gets up to **$200 in credits** ($100 on signup, up to $100 more
+  for onboarding tasks), usable for about six months on the Free plan, plus a
+  set of always-free services with monthly allowances. See the
+  [AWS Free Tier](https://aws.amazon.com/free/). Note AWS now charges for public
+  IPv4 addresses, which can quietly bill you.
+- **Google Cloud** gives new users **$300 in credits for 90 days**, plus an
+  always-free `e2-micro` VM in certain US regions. See
+  [Google Cloud Free](https://cloud.google.com/free).
+- **Azure** gives a signup credit plus some always-free services.
 
-- **GitHub Codespaces** and **Gitpod** give browser-based dev machines with a
-  monthly free allowance — ideal for running this lab in the browser without a
-  local install.
-- **Killercoda** and **Play with Docker** provide free, time-boxed interactive
+Trials and credits are fine to start on, but they expire or get consumed — do
+not build something you need long-term on them.
+
+## Free browser environments (great for practising, not hosting)
+
+- **GitHub Codespaces** — a personal Free account includes about **120
+  core-hours per month** (roughly 60 hours on a 2-core machine) plus some
+  storage. Ideal for running these labs in the browser with no local install.
+  See [Codespaces billing](https://docs.github.com/billing/managing-billing-for-github-codespaces/about-billing-for-github-codespaces).
+- **Gitpod**, **Killercoda**, and **Play with Docker** give free, time-boxed
   Linux/Docker sessions — good for trying things, but they reset.
 
 ## Free/low tiers to host a single web target
