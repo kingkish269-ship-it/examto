@@ -7,4 +7,6 @@ venv/
 reports/
 report.csv
 appsec_pwned_*
+.coach_progress.json
+PROGRESS.md
 .DS_Store

@@ -1,0 +1,98 @@
+[
+  {
+    "id": "py-demo",
+    "lab": "python-security-lab",
+    "title": "Run the Python security patterns",
+    "teach": "Eight reusable patterns underpin all security automation: parsing tool output, reading nested data, filtering findings, paging an API, CSV reports, retries, CLIs, and a cloud audit.",
+    "do": "cd python-security-lab && python3 run_demo.py",
+    "verify": {"cmd": "python3 run_demo.py", "cwd": "python-security-lab", "contains": "All eight patterns ran successfully."}
+  },
+  {
+    "id": "py-tests",
+    "lab": "python-security-lab",
+    "title": "Confirm the Python drills pass",
+    "teach": "Each pattern has a test. Passing tests are your instant feedback loop while you learn to modify code.",
+    "do": "cd python-security-lab && python3 -m unittest discover",
+    "verify": {"cmd": "python3 -m unittest discover", "cwd": "python-security-lab", "contains": "OK"}
+  },
+  {
+    "id": "appsec-tests",
+    "lab": "appsec-lab",
+    "title": "Set up and verify the AppSec lab",
+    "teach": "A deliberately vulnerable Flask app with 10 OWASP flaws, each paired with a fix. First make its tests pass so your environment is ready.",
+    "do": "cd appsec-lab && python3 -m venv .venv && . .venv/bin/activate && pip install -r requirements.txt && pytest tests/ -q",
+    "verify": {"cmd": "{py} -m pytest tests/ -q", "cwd": "appsec-lab", "contains": "passed", "setup": "python3 -m venv .venv && .venv/bin/pip install -r requirements.txt"}
+  },
+  {
+    "id": "ctf-setup",
+    "lab": "ctf-lab",
+    "title": "Set up the CTF and read the challenges",
+    "teach": "The CTF proves your skill: you exploit the target yourself and capture flags. No interaction with anyone needed — the checker grades you.",
+    "do": "cd ctf-lab && python3 -m venv .venv && . .venv/bin/activate && pip install -r requirements.txt && python ctf.py list",
+    "verify": {"cmd": "python3 ctf.py list", "cwd": "ctf-lab", "contains": "Solved:", "setup": "python3 -m venv .venv && .venv/bin/pip install -r requirements.txt"}
+  },
+  {
+    "id": "ctf-first-flag",
+    "lab": "ctf-lab",
+    "title": "Capture your first flag (easy tier)",
+    "teach": "Start the target in another terminal (python target/run_target.py). Pick an easy challenge (python ctf.py show idor), exploit it, then submit the flag (python ctf.py submit idor 'FLAG{...}').",
+    "do": "Start target, then: python ctf.py submit idor 'FLAG{...}'",
+    "verify": {"type": "ctf", "min_solved": 1}
+  },
+  {
+    "id": "ctf-easy-done",
+    "lab": "ctf-lab",
+    "title": "Clear the easy tier (4 flags)",
+    "teach": "Solve idor, sqli, traversal, and xss. Use 'python ctf.py hint <id>' when stuck; walkthroughs/ has full solutions as a last resort.",
+    "do": "Capture 4 flags total.",
+    "verify": {"type": "ctf", "min_solved": 4}
+  },
+  {
+    "id": "ctf-all-done",
+    "lab": "ctf-lab",
+    "title": "Capture all 8 flags",
+    "teach": "Finish the medium and hard tiers: forgeable session, SSRF to metadata, command injection, and JWT alg:none. This is a genuine, self-graded skills checkpoint.",
+    "do": "Capture all 8 flags (1000 points).",
+    "verify": {"type": "ctf", "min_solved": 8}
+  },
+  {
+    "id": "cloud-audit",
+    "lab": "cloud-security-lab",
+    "title": "Run the cloud exposure auditor",
+    "teach": "Turn cloud knowledge into automated checks: public buckets, open security groups, IAM wildcards, unencrypted/public databases, missing CloudTrail.",
+    "do": "cd cloud-security-lab && python3 -m auditor.audit data/sample_account.json --fail-on HIGH",
+    "verify": {"cmd": "python3 -m auditor.audit data/sample_account.json --fail-on HIGH", "cwd": "cloud-security-lab", "contains": "CRITICAL"}
+  },
+  {
+    "id": "iac-scan",
+    "lab": "iac-security-lab",
+    "title": "Scan a Terraform plan",
+    "teach": "Catch misconfiguration before deploy. The scanner reads a terraform plan and flags public storage, open security groups, public/unencrypted databases, and IAM admin wildcards.",
+    "do": "cd iac-security-lab && python3 scan.py terraform/sample_plan_insecure.json",
+    "verify": {"cmd": "python3 scan.py terraform/sample_plan_insecure.json", "cwd": "iac-security-lab", "contains": "rds-public"}
+  },
+  {
+    "id": "k8s-tests",
+    "lab": "container-k8s-lab",
+    "title": "Validate container and Kubernetes hardening",
+    "teach": "The validators flag privileged pods, running as root, writable root filesystems, missing limits, and risky Dockerfiles. The tests show insecure vs hardened.",
+    "do": "cd container-k8s-lab && python3 -m unittest discover",
+    "verify": {"cmd": "python3 -m unittest discover", "cwd": "container-k8s-lab", "contains": "OK"}
+  },
+  {
+    "id": "supply-scan",
+    "lab": "supply-chain-lab",
+    "title": "Analyze an SBOM for risky dependencies",
+    "teach": "A software bill of materials lets you answer 'are we affected by this CVE?'. The analyzer flags vulnerable and unpinned components.",
+    "do": "cd supply-chain-lab && python3 scan.py",
+    "verify": {"cmd": "python3 scan.py", "cwd": "supply-chain-lab", "contains": "vulnerable"}
+  },
+  {
+    "id": "devsecops-gate",
+    "lab": "devsecops-lab",
+    "title": "Run the release gate",
+    "teach": "The capstone: aggregate findings from Semgrep, Trivy, and Gitleaks, apply a policy, and block the release. This is the DevSecOps decision most engineers miss.",
+    "do": "cd devsecops-lab && python3 -m gate.run_gate --semgrep samples/semgrep_sample.json --trivy samples/trivy_sample.json --gitleaks samples/gitleaks_sample.json --fail-on HIGH",
+    "verify": {"cmd": "python3 -m gate.run_gate --semgrep samples/semgrep_sample.json --trivy samples/trivy_sample.json --gitleaks samples/gitleaks_sample.json --fail-on HIGH", "cwd": "devsecops-lab", "contains": "FAIL"}
+  }
+]

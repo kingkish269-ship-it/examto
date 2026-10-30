@@ -4,8 +4,11 @@ Hands-on labs for building the practical skills behind senior cloud, product, an
 DevSecOps security roles. Everything uses free, open-source tooling. No paid
 service, cloud account, or subscription is required to start.
 
-> **New here? Read [`START_HERE.md`](START_HERE.md)** — it sequences all eight
-> labs into one program with a week-by-week plan and a progress checklist.
+> **New here? Run the self-guided coach — it grades you, no help needed:**
+> ```bash
+> python3 coach.py        # shows your next task; `check` grades it
+> ```
+> Or read [`START_HERE.md`](START_HERE.md) for the full sequenced program.
 
 Built for an engineer already strong in endpoint, network, cloud, and data
 security who wants demonstrable automation, application security, and DevSecOps
