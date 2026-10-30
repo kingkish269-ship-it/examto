@@ -8,7 +8,9 @@ service, cloud account, or subscription is required to start.
 > ```bash
 > python3 coach.py        # shows your next task; `check` grades it
 > ```
-> Or read [`START_HERE.md`](START_HERE.md) for the full sequenced program.
+> Or read [`GUIDE.md`](GUIDE.md) for full instructions (setup, how to use the
+> coach, every lab, troubleshooting), or [`START_HERE.md`](START_HERE.md) for the
+> sequenced program at a glance.
 
 Built for an engineer already strong in endpoint, network, cloud, and data
 security who wants demonstrable automation, application security, and DevSecOps
@@ -26,6 +28,8 @@ skill. Each lab's core logic is tested so you can prove it works.
 | 6 | [`supply-chain-lab/`](supply-chain-lab/README.md) | SBOM analyzer; signing & provenance guides | stdlib |
 | 7 | [`devsecops-lab/`](devsecops-lab/README.md) | CI/CD policy gate that blocks releases | stdlib |
 | 8 | [`ctf-lab/`](ctf-lab/README.md) | Gamified capture-the-flag challenges (8, easy→hard) | Flask |
+| 9 | [`llm-security-lab/`](llm-security-lab/README.md) | AI/LLM security — OWASP LLM Top 10, attack + defend | stdlib |
+| 10 | [`detection-lab/`](detection-lab/README.md) | Detection engineering / SOC — rules over logs | stdlib |
 
 ## Suggested order
 

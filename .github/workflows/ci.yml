@@ -55,7 +55,7 @@ jobs:
 
       - name: Advanced labs (stdlib unittest)
         run: |
-          for lab in cloud-security-lab iac-security-lab container-k8s-lab supply-chain-lab devsecops-lab; do
+          for lab in cloud-security-lab iac-security-lab container-k8s-lab supply-chain-lab devsecops-lab llm-security-lab detection-lab; do
             if [ -d "$lab" ]; then
               echo "== $lab =="
               ( cd "$lab" && python -m unittest discover -v )
