@@ -1,0 +1,122 @@
+[
+  {
+    "id": "idor",
+    "tier": "easy",
+    "points": 100,
+    "title": "Read the admin's account",
+    "target": "GET /api/account/<id>",
+    "objective": "The app returns any account by id with no ownership check. Read the admin account and capture the note it hides.",
+    "hints": [
+      "Accounts are numbered. Try ids other than your own.",
+      "The admin is id 3.",
+      "curl http://127.0.0.1:5000/api/account/3"
+    ],
+    "salt": "ctf-idor-salt",
+    "flag_sha256": "5a640eec52cef1863ace2f53ce04740ded7733f95b319c31737056a5ac42db08"
+  },
+  {
+    "id": "sqli",
+    "tier": "easy",
+    "points": 100,
+    "title": "Leak the secrets table",
+    "target": "GET /api/search?username=",
+    "objective": "The search query is built by string concatenation. Use a UNION to read the hidden secrets table.",
+    "hints": [
+      "Break out of the quoted string with a single quote.",
+      "The query selects two columns; your UNION must match.",
+      "username=' UNION SELECT flag, label FROM secrets-- -"
+    ],
+    "salt": "ctf-sqli-salt",
+    "flag_sha256": "0e9805b6cf0863ab6202ccba63f246f114827a554c57a4577eab132fbad0d328"
+  },
+  {
+    "id": "traversal",
+    "tier": "easy",
+    "points": 100,
+    "title": "Escape the web root",
+    "target": "GET /download?file=",
+    "objective": "The download endpoint joins your filename without confinement. Read the flag file outside the served folder.",
+    "hints": [
+      "The served folder has a parent directory.",
+      "Use ../ to climb up one level.",
+      "file=../ctf_flag.txt"
+    ],
+    "salt": "ctf-traversal-salt",
+    "flag_sha256": "15be30bfe50867868aa55683ead9d6e50cd3266cc39e59b149c2718b19afb7a2"
+  },
+  {
+    "id": "xss",
+    "tier": "easy",
+    "points": 75,
+    "title": "Pop the admin bot",
+    "target": "GET /greet?name=",
+    "objective": "Your name is reflected into HTML unescaped. Land a script payload; a simulated admin bot executes it and leaks its cookie in a response header.",
+    "hints": [
+      "The value is placed straight into the page.",
+      "A <script> tag or an onerror handler triggers the bot.",
+      "name=<script>x</script> then read the X-Admin-Cookie header"
+    ],
+    "salt": "ctf-xss-salt",
+    "flag_sha256": "7b03f752fbeec1f191a83e5624b2745b7a6251c64794057c168089079f0e3e00"
+  },
+  {
+    "id": "session",
+    "tier": "medium",
+    "points": 150,
+    "title": "Forge an admin session",
+    "target": "GET /ctf/admin  (header X-Session)",
+    "objective": "The session token is not random \u2014 it encodes the username and role. Forge an admin token and reach /ctf/admin.",
+    "hints": [
+      "Log in as a normal user and look at the token format.",
+      "It is base64url of 'username:role'.",
+      "base64url('admin:admin') in the X-Session header"
+    ],
+    "salt": "ctf-session-salt",
+    "flag_sha256": "32b5d468434d7bf22c27cc252da07aed1e6d0b149e0acd40a253f22aa3dc6cfb"
+  },
+  {
+    "id": "ssrf",
+    "tier": "medium",
+    "points": 150,
+    "title": "Reach the metadata service",
+    "target": "GET /fetch?url=",
+    "objective": "The fetch endpoint will request internal addresses. Reach the cloud metadata service and read the role credentials.",
+    "hints": [
+      "The classic internal target is the link-local metadata IP.",
+      "169.254.169.254 serves instance metadata.",
+      "url=http://169.254.169.254/latest/meta-data/iam/security-credentials/role"
+    ],
+    "salt": "ctf-ssrf-salt",
+    "flag_sha256": "82829e0cf260154d75c7e7f3e9dd28b60701bfc67a34f8199381d9940a84bee4"
+  },
+  {
+    "id": "cmdi",
+    "tier": "medium",
+    "points": 125,
+    "title": "Run a second command",
+    "target": "GET /diag?host=",
+    "objective": "The diagnostic runs a shell command built from your input. Inject a second command to read the flag from the environment variable CTF_FLAG.",
+    "hints": [
+      "The host value lands inside a shell command.",
+      "A semicolon separates commands.",
+      "host=x; printenv CTF_FLAG"
+    ],
+    "salt": "ctf-cmdi-salt",
+    "flag_sha256": "0c5ad214daffa70c265fa82783fae3cef7f86f6072bcbfe0bb3065105947fea2"
+  },
+  {
+    "id": "jwt",
+    "tier": "hard",
+    "points": 200,
+    "title": "alg:none forgery",
+    "target": "GET /ctf/jwt-admin  (Authorization: Bearer <jwt>)",
+    "objective": "The JWT verifier trusts the token's own 'alg' header. Forge an unsigned admin token and access the endpoint.",
+    "hints": [
+      "A JWT is three base64url parts: header.payload.signature.",
+      "Set the header alg to 'none' and leave the signature empty.",
+      "header {\"alg\":\"none\"}, payload {\"user\":\"admin\"}, then base64url(header)+'.'+base64url(payload)+'.'"
+    ],
+    "salt": "ctf-jwt-salt",
+    "flag_sha256": "60dd636293e03b21c79a93e183ea62225c465649133745d61c1481a462f1ca0b"
+  }
+]

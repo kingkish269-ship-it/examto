@@ -19,6 +19,7 @@ skill. Each lab's core logic is tested so you can prove it works.
 | 5 | [`container-k8s-lab/`](container-k8s-lab/README.md) | Dockerfile + Kubernetes validators, Kyverno policies | stdlib |
 | 6 | [`supply-chain-lab/`](supply-chain-lab/README.md) | SBOM analyzer; signing & provenance guides | stdlib |
 | 7 | [`devsecops-lab/`](devsecops-lab/README.md) | CI/CD policy gate that blocks releases | stdlib |
+| 8 | [`ctf-lab/`](ctf-lab/README.md) | Gamified capture-the-flag challenges (8, easy→hard) | Flask |
 
 ## Suggested order
 
@@ -26,6 +27,7 @@ skill. Each lab's core logic is tested so you can prove it works.
 2. **Application security** (lab 2) — attack, fix, prove.
 3. **Cloud** (lab 3) — turn your AWS knowledge into checks.
 4. **IaC → containers/K8s → supply chain** (labs 4–6) — shift security left.
+5. **CTF** (lab 8) — prove your AppSec skill by capturing flags under your own steam.
 5. **DevSecOps** (lab 7) — assemble it all into a release gate.
 
 The full career plan is in
