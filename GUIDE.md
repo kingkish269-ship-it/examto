@@ -37,6 +37,33 @@ need a quick virtual environment.
 That is all you need to begin. Two labs (`appsec-lab`, `ctf-lab`) also use
 Flask; the guide tells you exactly when and how to set that up.
 
+### Option: run in your browser with GitHub Codespaces (no install)
+
+If you don't want to install anything locally, open the repo in a **GitHub
+Codespace** — a full Linux dev machine in your browser with Python and git
+already there.
+
+1. On the repo page, click **Code → Codespaces → Create codespace on main**.
+2. Wait for it to load, then in its terminal:
+   ```bash
+   python3 coach.py        # start the program immediately
+   ```
+3. The Flask labs work too: run their venv setup (section 6). To play the CTF,
+   start the target, then open the **forwarded port** popup Codespaces shows,
+   or use `curl` inside the same terminal.
+
+Good to know:
+
+- A personal **Free** account includes about **120 core-hours per month**
+  (roughly 60 hours on a 2-core machine). Plenty for working through the labs;
+  stop the codespace when you're done so it doesn't burn hours idle.
+- Codespaces is for **doing the labs**, not for **hosting** a lab platform for
+  others. A codespace sleeps when idle and is tied to your session — for an
+  always-on shared CTF use Oracle Always Free + CTFd (see
+  [`ctf-lab/HOSTING.md`](ctf-lab/HOSTING.md)).
+- If you expose the intentionally vulnerable apps via a forwarded port, keep the
+  port **private** (the default), never public.
+
 ## 3. The 4-command loop
 
 The coach runs the whole program for you and grades you automatically. From the
