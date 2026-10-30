@@ -1,98 +1,378 @@
 [
   {
     "id": "intro",
-    "title": "Intro to Application Security",
+    "title": "Intro \u2014 Application Security",
     "topic": "AppSec basics",
     "dir": "intro",
-    "summary": "Web apps = client, server, database. Almost every web vuln is untrusted input reaching a dangerous 'sink'. Golden rule: never trust client input.",
+    "summary": "Web apps = client, server, database. Almost every web vuln is untrusted input reaching a dangerous sink. Golden rule: never trust client input.",
     "objectives": [
-      "Read the theory (client -> server -> sink flow).",
-      "Learn the terms 'source' (where input enters) and 'sink' (the dangerous operation).",
-      "Learn the golden rule about trusting client input.",
+      "Read the client -> server -> sink flow.",
+      "Learn source vs sink.",
+      "Learn the golden rule about client input.",
       "Answer the task."
     ],
-    "task": "The golden rule: should you TRUST data coming from the client? Answer true or false.",
-    "hint": "The attacker fully controls the request, so the client can never be trusted.",
+    "task": "Should you TRUST data coming from the client? Answer true or false.",
+    "hint": "The attacker controls the request, so never.",
     "answer_sha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa"
+  },
+  {
+    "id": "http",
+    "title": "Web & APIs \u2014 Fundamentals",
+    "topic": "AppSec foundations",
+    "dir": "http-apis",
+    "summary": "HTTP = method, path, headers, body. Server reads inputs (source) and passes them to a sink. APIs exchange JSON with a bearer token.",
+    "objectives": [
+      "Learn request parts and status codes.",
+      "Learn source and sink.",
+      "curl a site with -D - and read the headers."
+    ],
+    "task": "What do we call the dangerous operation that untrusted input reaches? (one word)",
+    "hint": "The opposite of 'source'.",
+    "answer_sha256": "1978baf2c153fd3bf3633f3a4b12fa6782507dc6056bbaf16909a6597f4a2548"
+  },
+  {
+    "id": "access",
+    "title": "Access Control \u2014 Broken Access Control (A01)",
+    "topic": "OWASP Top 10",
+    "dir": "access-control",
+    "summary": "The #1 web risk: reaching data/actions you shouldn't. IDOR = object returned by id with no ownership check.",
+    "objectives": [
+      "Read exercises/01 in appsec-lab.",
+      "Understand why UI-hiding is not a control.",
+      "Note the server-side ownership fix."
+    ],
+    "task": "What is the common abbreviation for Insecure Direct Object Reference?",
+    "hint": "Four letters.",
+    "answer_sha256": "0b5a52cdc4f5481343077f16476c5afde78732e28c9c5eafbf7f9a9a54a0540d"
+  },
+  {
+    "id": "inject",
+    "title": "Injection \u2014 SQL & Command (A03)",
+    "topic": "OWASP Top 10",
+    "dir": "injection",
+    "summary": "Untrusted input becomes part of a command/query the server runs. SQLi and command injection.",
+    "objectives": [
+      "Read appsec-lab exercises 02 and 06.",
+      "Run the SQLi and command-injection exploits.",
+      "Note the fixes."
+    ],
+    "task": "What kind of SQL queries prevent injection? (one word, spelled 'parameterized')",
+    "hint": "Data travels separately from the query.",
+    "answer_sha256": "f7e9e7e32354d1077e603617c08b6543015f7fc229760a46c820cacd1f2db729"
+  },
+  {
+    "id": "xss",
+    "title": "XSS \u2014 Cross-Site Scripting (A03)",
+    "topic": "OWASP Top 10",
+    "dir": "xss",
+    "summary": "Your input echoed into HTML runs as code in a victim's browser. Fix: output encoding + CSP.",
+    "objectives": [
+      "Read appsec-lab exercise 03.",
+      "Attack /greet with a <script> payload.",
+      "Note the escape() fix."
+    ],
+    "task": "What is the 3-letter abbreviation for this vulnerability?",
+    "hint": "Cross-Site Scripting.",
+    "answer_sha256": "58e0413224af6b6d3505dd1819d02491c34588de7a4dc6a9ad48a8f7e08e2f7b"
+  },
+  {
+    "id": "ssrf",
+    "title": "SSRF \u2014 Server-Side Request Forgery (A10)",
+    "topic": "OWASP Top 10",
+    "dir": "ssrf",
+    "summary": "You make the server fetch internal URLs, e.g. the cloud metadata IP 169.254.169.254. Fix: block private/loopback/link-local ranges.",
+    "objectives": [
+      "Read appsec-lab exercise 04.",
+      "Use SSRF to read a local file.",
+      "Note the IP-range-blocking fix."
+    ],
+    "task": "169.254.169.254 belongs to which reserved IP range? (one hyphenated word)",
+    "hint": "Same range your network training calls 169.254.0.0/16.",
+    "answer_sha256": "6064640044b6aa881fb94ec61b949b948b58b8089a71d488ce1d766ea42b58a0"
+  },
+  {
+    "id": "authn",
+    "title": "Auth \u2014 Authentication & JWT (A07)",
+    "topic": "OWASP Top 10",
+    "dir": "authn",
+    "summary": "Forge-able tokens = account takeover. Fix: random server-side sessions. JWT classic flaw: accepting alg:none.",
+    "objectives": [
+      "Read appsec-lab exercise 08.",
+      "Forge the insecure session token.",
+      "Learn the JWT alg pitfall."
+    ],
+    "task": "A JWT whose header alg is set to ___ has no signature and must be rejected.",
+    "hint": "It literally means 'no algorithm'.",
+    "answer_sha256": "140bedbf9c3f6d56a9846d2ba7088798683f4da0c248231336e6a05679e4fdfe"
+  },
+  {
+    "id": "crypto",
+    "title": "Crypto \u2014 Cryptographic Failures (A02)",
+    "topic": "OWASP Top 10",
+    "dir": "crypto",
+    "summary": "Weak hashing and leaked secrets. Passwords need salted slow hashes; secrets live in env vars or a vault, never in code.",
+    "objectives": [
+      "Read appsec-lab exercise 09.",
+      "See why MD5 password hashes are unsafe.",
+      "Learn where secrets belong."
+    ],
+    "task": "Secrets like API keys should live in environment variables or a ___ (one word).",
+    "hint": "A secrets manager / key ___.",
+    "answer_sha256": "e6f0a1fbb43c89196dcfcbef85908f19ab4c5f7cc4f4c452284697757683d7ef"
+  },
+  {
+    "id": "deser",
+    "title": "Deserialization \u2014 Insecure Deserialization (A08)",
+    "topic": "OWASP Top 10",
+    "dir": "deserialization",
+    "summary": "Turning attacker bytes into objects can run their code (RCE). Fix: use JSON, never pickle/yaml on untrusted data.",
+    "objectives": [
+      "Read appsec-lab exercise 07.",
+      "See a payload execute during loads().",
+      "Note the JSON fix."
+    ],
+    "task": "Which Python function running on untrusted data causes RCE? (one word, the module name)",
+    "hint": "It 'pickles' objects.",
+    "answer_sha256": "6d08a4e630e4aa0d5cd873e65aea0a23df42de61073ecb49ef17158fe6a9dcea"
+  },
+  {
+    "id": "misconfig",
+    "title": "Misconfig \u2014 Security Misconfiguration (A05)",
+    "topic": "OWASP Top 10",
+    "dir": "misconfig",
+    "summary": "Cheap hardening most apps skip: security headers, generic errors, no debug mode.",
+    "objectives": [
+      "Read appsec-lab exercise 10.",
+      "Compare headers in vulnerable vs secure mode.",
+      "List the headers you now set by default."
+    ],
+    "task": "Which response header (name) with value 'nosniff' stops MIME sniffing?",
+    "hint": "Starts with X-Content-...",
+    "answer_sha256": "198fc233cd78d14b7abb406264a93f90ade842e352f27839a707a90578e3dd26"
+  },
+  {
+    "id": "appsec",
+    "title": "CTF \u2014 Capture a real flag",
+    "topic": "application security",
+    "dir": "appsec",
+    "summary": "Exploit a real IDOR and capture a flag, the way security people practise everywhere.",
+    "objectives": [
+      "Start the CTF target (ctf-lab).",
+      "curl /api/account/3 as a non-admin.",
+      "Find the FLAG in secret_note and submit it."
+    ],
+    "task": "Exploit the IDOR (GET /api/account/3) and paste the FLAG{...}.",
+    "hint": "Admin is id 3; flag is in secret_note.",
+    "answer_sha256": "02f6808c96e8e9d4e3d9fd380de47dbff18635039f88ab5b4bf1dc8e98cd5cae"
+  },
+  {
+    "id": "api",
+    "title": "API Security \u2014 OWASP API Top 10",
+    "topic": "API security",
+    "dir": "api-security",
+    "summary": "Modern apps are APIs with their own Top 10. #1 is Broken Object Level Authorization (the API's IDOR).",
+    "objectives": [
+      "Re-examine appsec-lab /api endpoints as APIs.",
+      "Spot BOLA and excessive data exposure.",
+      "Note object/function-level authz fixes."
+    ],
+    "task": "OWASP API #1, Broken Object Level Authorization, is abbreviated ___ (4 letters).",
+    "hint": "B_O_L_A.",
+    "answer_sha256": "8b88c35eb7ba86b91d8c4b69d468df3d24931071206c07cc61c3aaff03aaea88"
+  },
+  {
+    "id": "llm",
+    "title": "AI/LLM \u2014 LLM Security",
+    "topic": "AI security",
+    "dir": "llm-security",
+    "summary": "OWASP Top 10 for LLM apps: prompt injection, insecure output handling, disclosure, excessive agency.",
+    "objectives": [
+      "Run llm-security-lab/demo.py.",
+      "Watch each attack succeed then be blocked.",
+      "Learn the guardrails."
+    ],
+    "task": "Tricking an LLM with 'ignore previous instructions' is called prompt ___ (one word).",
+    "hint": "Same word as the SQL/command vuln family.",
+    "answer_sha256": "545a70019936cf88744185133577a965a1b49a40a9d1be1a3b3c773a31eac2a9"
   },
   {
     "id": "tm",
     "title": "Threat Modeling \u2014 STRIDE",
     "topic": "threat modeling",
     "dir": "threat-modeling",
-    "summary": "Threat modeling finds design flaws early. STRIDE = Spoofing, Tampering, Repudiation, Information disclosure, Denial of service, Elevation of privilege.",
+    "summary": "Find design flaws early with STRIDE: Spoofing, Tampering, Repudiation, Information disclosure, Denial of service, Elevation of privilege.",
     "objectives": [
-      "Read the six STRIDE categories in the briefing.",
-      "Study the flaw: a session token is just base64('username:role').",
-      "Decide what the attacker achieves by forging 'admin:admin'.",
-      "Match it to ONE STRIDE category and submit that word."
+      "Read the six STRIDE categories.",
+      "Study a forgeable 'admin:admin' token.",
+      "Match it to one category."
     ],
-    "task": "Which STRIDE category is a forgeable 'admin:admin' session token? Submit one word.",
-    "hint": "The attacker pretends to be someone they are not.",
+    "task": "Which STRIDE category is a forgeable 'admin:admin' token? (one word)",
+    "hint": "Pretending to be someone else.",
     "answer_sha256": "a28d0cfe57e63557d391b2c693ee3abd6f6472ce35d5d78a952f2ddcb253fbd0"
   },
   {
-    "id": "sast",
-    "title": "SAST \u2014 find the bug in source",
-    "topic": "SAST",
-    "dir": "sast",
-    "summary": "SAST reads source code (without running it) to flag risky patterns, like user input reaching a shell command.",
+    "id": "review",
+    "title": "Code Review \u2014 Secure Code Review",
+    "topic": "AppSec skill",
+    "dir": "code-review",
+    "summary": "Reading code for the recurring sins: injection, secrets, verify=False, pickle, path traversal.",
     "objectives": [
-      "Open rooms/sast/vulnerable_example.py and read ping_host().",
-      "Run: cd rooms/sast && python3 scan.py vulnerable_example.py",
-      "Read the line number and the vulnerability class it reports.",
-      "Submit that vulnerability class (two words)."
+      "Study the sin patterns in the briefing.",
+      "Open appsec-lab/vulnerable_app/app.py.",
+      "Find each insecure branch and name the bug."
     ],
-    "task": "What vulnerability class does the scanner report on the shell=True line? (two words)",
-    "hint": "subprocess with shell=True plus user input.",
+    "task": "subprocess.run(cmd, shell=True) on user input is which injection? (two words)",
+    "hint": "The OS runs it.",
+    "answer_sha256": "5e8e5af630e323f31857c1cc395ce98e2bf222272a7adf06b13a4ba4154b1893"
+  },
+  {
+    "id": "sast",
+    "title": "SAST \u2014 Static Analysis",
+    "topic": "DevSecOps",
+    "dir": "sast",
+    "summary": "SAST reads source (without running it) to flag risky patterns like input reaching a shell.",
+    "objectives": [
+      "Read rooms/sast/vulnerable_example.py.",
+      "Run rooms/sast/scan.py on it.",
+      "Read the vulnerability class it reports."
+    ],
+    "task": "What vulnerability class does the SAST scanner report? (two words)",
+    "hint": "shell=True with user input.",
     "answer_sha256": "5e8e5af630e323f31857c1cc395ce98e2bf222272a7adf06b13a4ba4154b1893"
   },
   {
     "id": "dast",
-    "title": "DAST \u2014 attack the running app",
+    "title": "DAST \u2014 Dynamic Analysis",
     "topic": "DAST",
     "dir": "dast",
-    "summary": "DAST attacks the running app to confirm real exploitability. Classic: reflected XSS, where your input is echoed into the page unescaped.",
+    "summary": "DAST attacks the running app to confirm real exploitability (e.g. reflected XSS).",
     "objectives": [
-      "Start the appsec app: cd appsec-lab, set up its venv, python3 run_server.py.",
-      "In a second terminal, curl /greet with a <script> payload.",
-      "See your script reflected unescaped in the response.",
-      "Identify the OWASP vuln (3-letter abbreviation) and submit it."
+      "Start the appsec app.",
+      "curl /greet with a <script> payload.",
+      "Identify the vuln (3-letter abbreviation)."
     ],
-    "task": "Attacking /greet with a <script> payload is which OWASP vuln? (3-letter abbreviation)",
-    "hint": "Reflected script running in the page.",
+    "task": "Attacking /greet with a <script> payload is which OWASP vuln? (3 letters)",
+    "hint": "Reflected script in the page.",
     "answer_sha256": "58e0413224af6b6d3505dd1819d02491c34588de7a4dc6a9ad48a8f7e08e2f7b"
   },
   {
-    "id": "appsec",
-    "title": "AppSec \u2014 capture a real flag",
-    "topic": "application security",
-    "dir": "appsec",
-    "summary": "IDOR = returning an object by id with no ownership check. Change the id, read someone else's data.",
+    "id": "sca",
+    "title": "SCA \u2014 Dependency Scanning",
+    "topic": "DevSecOps",
+    "dir": "sca",
+    "summary": "Software Composition Analysis inventories dependencies and flags ones with known CVEs or no pinned version.",
     "objectives": [
-      "Start the CTF target: cd ctf-lab, set up its venv, python3 target/run_target.py.",
-      "In a second terminal: curl http://127.0.0.1:5000/api/account/3 (you are NOT admin).",
-      "Find the FLAG{...} in the secret_note field.",
-      "Submit the exact flag."
+      "Run supply-chain-lab/scan.py.",
+      "See vulnerable and unpinned components.",
+      "Learn how SCA uses an SBOM."
     ],
-    "task": "Exploit the IDOR (GET /api/account/3) and paste the FLAG{...} you captured.",
-    "hint": "Account id 3 is the admin; the flag is in secret_note.",
-    "answer_sha256": "02f6808c96e8e9d4e3d9fd380de47dbff18635039f88ab5b4bf1dc8e98cd5cae"
+    "task": "Scanning dependencies for known CVEs is called Software Composition Analysis, abbreviated ___ (3 letters).",
+    "hint": "First letters of the three words.",
+    "answer_sha256": "bb4f803029873576f26891574315555c1b1242052a210e53b81471667dd53327"
+  },
+  {
+    "id": "secrets",
+    "title": "Secrets \u2014 Secret Scanning",
+    "topic": "DevSecOps",
+    "dir": "secrets",
+    "summary": "Find committed credentials in code and git history; rotate anything ever committed.",
+    "objectives": [
+      "Read appsec-lab/tools/run_gitleaks.sh.",
+      "Understand why history matters.",
+      "Name a free secret scanner."
+    ],
+    "task": "Name a popular free tool that scans a repo for committed secrets (one word).",
+    "hint": "Rhymes with 'git leaks'.",
+    "answer_sha256": "f0469ec6e4d6370876fe201c7d2ce2300f3355841c93d2326784d865a6c2f681"
   },
   {
     "id": "cicd",
-    "title": "CI/CD Security \u2014 the release gate",
-    "topic": "DevSecOps / CI-CD",
+    "title": "CI/CD \u2014 Pipeline Security",
+    "topic": "DevSecOps",
     "dir": "cicd",
-    "summary": "A DevSecOps gate collects scanner findings and returns an exit code: 0 lets CI continue, non-zero blocks the build.",
+    "summary": "A pipeline gate collects scanner findings and returns an exit code: 0 continues, non-zero blocks the build.",
     "objectives": [
       "cd devsecops-lab.",
-      "Run the gate on the samples with --fail-on HIGH (command in the briefing).",
-      "Read the FAIL output, then run: echo $? to see the exit code.",
-      "Submit that exit code (a number)."
+      "Run the gate on the samples with --fail-on HIGH.",
+      "Run echo $? to read the exit code."
     ],
-    "task": "What exit code does the gate return when it blocks the release? Submit the number.",
-    "hint": "Non-zero means stop; it is a single digit.",
+    "task": "What exit code does the gate return when it blocks the release? (a number)",
+    "hint": "Non-zero; a single digit.",
     "answer_sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+  },
+  {
+    "id": "iac",
+    "title": "IaC \u2014 Terraform Security",
+    "topic": "cloud-native",
+    "dir": "iac",
+    "summary": "Catch cloud misconfig in Terraform before apply: public S3, open SGs, public/unencrypted DBs, IAM wildcards.",
+    "objectives": [
+      "Run iac-security-lab/scan.py on the insecure plan.",
+      "Read the findings.",
+      "Compare insecure vs secure .tf."
+    ],
+    "task": "Scanning the insecure plan, which rule id fires for a publicly accessible database?",
+    "hint": "rds-___ .",
+    "answer_sha256": "0bcd3ec429b1d2ba6faea25ff8f50bf9aed58367cc2b5ee255041c72e4d6e7a7"
+  },
+  {
+    "id": "containers",
+    "title": "Containers \u2014 Docker Security",
+    "topic": "cloud-native",
+    "dir": "containers",
+    "summary": "Harden images: pin by digest, non-root user, minimal base, read-only fs, drop capabilities, scan for CVEs.",
+    "objectives": [
+      "Compare insecure vs secure Dockerfile in container-k8s-lab.",
+      "Run the Dockerfile linter.",
+      "Note the non-root fix."
+    ],
+    "task": "A container should NOT run as which user? (one word)",
+    "hint": "The superuser.",
+    "answer_sha256": "4813494d137e1631bba301d5acab6e7bb7aa74ce1185d456565ef51d737677b2"
+  },
+  {
+    "id": "k8s",
+    "title": "Kubernetes \u2014 K8s Security",
+    "topic": "cloud-native",
+    "dir": "kubernetes",
+    "summary": "Harden workloads to the restricted profile and enforce at admission with Kyverno/OPA.",
+    "objectives": [
+      "Compare insecure vs secure Deployment in container-k8s-lab.",
+      "Run the manifest validator.",
+      "Read the Kyverno policies."
+    ],
+    "task": "Which securityContext field must be true so a container does not run as root? (one word, no spaces)",
+    "hint": "runAs___ .",
+    "answer_sha256": "3b1262601f5ef48275920375b96848e755b3296d19fca9979133aad6acfcc834"
+  },
+  {
+    "id": "supplychain",
+    "title": "Supply Chain \u2014 SBOM & Signing",
+    "topic": "DevSecOps",
+    "dir": "supply-chain-room",
+    "summary": "Know and trust your build: SBOM inventory, Cosign signing, SLSA provenance.",
+    "objectives": [
+      "Run supply-chain-lab/scan.py.",
+      "Read the Syft/Cosign/SLSA exercises.",
+      "Learn what an SBOM is."
+    ],
+    "task": "A machine-readable inventory of all components in your software is called an ___ (4-letter abbreviation).",
+    "hint": "Software Bill of Materials.",
+    "answer_sha256": "98f3ae1ef67113d8140d4f6cb8d2830070e21ea48f091be519659846c771a374"
+  },
+  {
+    "id": "interview",
+    "title": "Interview \u2014 Rs 70+ LPA prep",
+    "topic": "career",
+    "dir": "interview",
+    "summary": "Your infra background plus demonstrable AppSec+DevSecOps skill is the rare, high-paying combination.",
+    "objectives": [
+      "Review what the senior band expects.",
+      "List modules you've completed.",
+      "Pick two strongest as interview stories."
+    ],
+    "task": "For a senior role, your strongest proof is a ___ of real projects (one word).",
+    "hint": "This repo is yours.",
+    "answer_sha256": "0e6a8e0b849ed9b064c5a25e1ee5592f427e3eb9d250e42069ce46147d00e8d4"
   }
 ]
