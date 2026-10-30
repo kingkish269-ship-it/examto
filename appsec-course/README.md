@@ -20,6 +20,11 @@ cd appsec-lab && python3 -m venv .venv && source .venv/bin/activate && pip insta
 cd ctf-lab   && python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt && cd ..
 ```
 
+## Free tools for each module
+
+Every module has free / open-source tools to practise with beyond the labs.
+The full per-module list is in [`TOOLS.md`](TOOLS.md).
+
 ## How to use each module
 
 1. Read the **Theory** (5 minutes, plain English).
