@@ -7,6 +7,10 @@ your work needs — not become a software engineer.
 
 ---
 
+> **Want step-by-step lessons with a test after each module?** Do the
+> hands-on track in [`learn-python/`](learn-python/) — it teaches each tier in
+> small steps and grades you (`python3 check.py` to start).
+
 ## 0. Mindset and your finish line
 
 You are **not** learning "all of Python." You are learning Python as a tool to

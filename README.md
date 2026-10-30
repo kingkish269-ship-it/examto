@@ -55,7 +55,7 @@ the eight-week AppSec schedule is in [`appsec-lab/PLAN.md`](appsec-lab/PLAN.md).
 
 **New to Python?** Read [`PYTHON_FOR_YOUR_DOMAIN.md`](PYTHON_FOR_YOUR_DOMAIN.md)
 — a complete, read-and-follow guide to the exact Python a security engineer
-needs (no lab required), with an 8-week plan and resources.
+needs (no lab required), with an 8-week plan and resources. For **step-by-step lessons that test you**, use [`learn-python/`](learn-python/).
 
 ## Quick start
 
