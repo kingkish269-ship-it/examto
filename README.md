@@ -13,6 +13,9 @@ Hands-on labs for building the practical skills behind senior cloud, product, an
 DevSecOps security roles. Everything uses free, open-source tooling. No paid
 service, cloud account, or subscription is required to start.
 
+> **Want the whole plan in one place?** Follow [`FINISH_ON_YOUR_OWN.md`](FINISH_ON_YOUR_OWN.md)
+> — a complete, self-grading, start-to-finish playbook (no help needed).
+>
 > **New here? Run the self-guided coach — it grades you, no help needed:**
 > ```bash
 > python3 coach.py        # shows your next task; `check` grades it

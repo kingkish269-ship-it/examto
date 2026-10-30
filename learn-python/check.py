@@ -24,6 +24,7 @@ MODULES = {
     2: ("Data & parsing (Tier 2)", [4, 5, 6, 7, 8, 9]),
     3: ("Automation (Tier 3)", [10, 11, 12]),
     4: ("Command-line tools (Tier 4)", [13]),
+    5: ("Real-world automation: Graph / Intune", [14]),
 }
 TITLES = {
     1: "Variables and f-strings", 2: "String methods (.split)",
@@ -31,6 +32,7 @@ TITLES = {
     6: "Filtering with loops + if", 7: "Sets (remove duplicates)",
     8: "Read JSON", 9: "Regex (extract an IP)", 10: "Write a function",
     11: "Read a file", 12: "Error handling (try/except)", 13: "Build a CLI (argparse)",
+    14: "Apply Intune tags via Microsoft Graph",
 }
 TOTAL = len(TITLES)
 
@@ -83,6 +85,32 @@ def _t(num, mod):
     if num == 13:
         args = mod.build_parser().parse_args(["f.json"])
         return _cmp([args.file, args.severity], ["f.json", "HIGH"])
+    if num == 14:
+        class _Resp:
+            status_code = 200
+            def __init__(self, data): self._d = data
+            def json(self): return self._d
+        class _Session:
+            def __init__(self): self.calls = []
+            def post(self, url, data=None):
+                self.calls.append(("post", url, data, None, None))
+                return _Resp({"access_token": "TKN123", "expires_in": 3599})
+            def patch(self, url, headers=None, json=None):
+                self.calls.append(("patch", url, None, headers, json))
+                return _Resp({"id": "c1", "roleScopeTagIds": (json or {}).get("roleScopeTagIds")})
+        s = _Session()
+        tok = mod.get_token("contoso.onmicrosoft.com", "cid", "secret", s)
+        if tok != "TKN123":
+            return False, f"get_token returned {tok!r}, expected 'TKN123' (the access_token field)"
+        mod.apply_scope_tag("c1", ["2"], tok, s)
+        patch = [c for c in s.calls if c[0] == "patch"]
+        if not patch:
+            return False, "apply_scope_tag did not call session.patch"
+        _, url, _, headers, body = patch[0]
+        ok = ("deviceConfigurations/c1" in url
+              and headers.get("Authorization") == "Bearer TKN123"
+              and body.get("roleScopeTagIds") == ["2"])
+        return (ok, "Correct!" if ok else "apply_scope_tag used the wrong url/headers/body")
     return False, "no test"
 
 

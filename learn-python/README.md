@@ -56,6 +56,10 @@ python3 check.py
 **Module 4 — Command-line tools (Tier 4)**
 13. Build a CLI with `argparse`
 
+**Module 5 — Real-world automation (Graph / Intune)**
+14. Apply Intune tags via Microsoft Graph — a real interview task (get a token,
+    then PATCH a device configuration). Tested offline with a fake session.
+
 ## How to progress
 
 Do the lessons in order. Finish a module, run its test, and only move on when it
