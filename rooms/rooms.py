@@ -63,13 +63,20 @@ def cmd_show(rid: str) -> int:
     if not r:
         print(f"No room '{rid}'. Run: python3 rooms.py")
         return 2
-    print(f"=== {r['title']}  [{r['topic']}] ===\n")
-    print(f"Briefing: read  rooms/{r['dir']}/README.md\n")
-    print("Your task:")
-    print(f"  {r['task']}\n")
-    print(f"Submit when you have it:\n  python3 rooms.py submit {rid} <your answer>")
+    done = r["id"] in _done()
+    print(f"=== {r['title']}  [{r['topic']}] ===   {'[COMPLETED]' if done else ''}\n")
+    print("New here? You can't break anything. Read the theory, do the objectives")
+    print("in order, and use the free hint if you get stuck.\n")
+    print("LEARN")
+    print(f"  {r['summary']}")
+    print(f"  Full briefing: rooms/{r['dir']}/README.md\n")
+    print("OBJECTIVES  (tick these off as you go — they are your notes)")
+    for i, obj in enumerate(r["objectives"], 1):
+        print(f"  [ ] {i}. {obj}")
+    print(f"\nTASK\n  {r['task']}")
+    print(f"\nSUBMIT\n  python3 rooms.py submit {rid} <your answer>")
     if r.get("hint"):
-        print(f"\nStuck? Hint: {r['hint']}")
+        print(f"\nHINT (free)\n  {r['hint']}")
     return 0
 
 

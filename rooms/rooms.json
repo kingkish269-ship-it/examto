@@ -1,9 +1,32 @@
 [
   {
+    "id": "intro",
+    "title": "Intro to Application Security",
+    "topic": "AppSec basics",
+    "dir": "intro",
+    "summary": "Web apps = client, server, database. Almost every web vuln is untrusted input reaching a dangerous 'sink'. Golden rule: never trust client input.",
+    "objectives": [
+      "Read the theory (client -> server -> sink flow).",
+      "Learn the terms 'source' (where input enters) and 'sink' (the dangerous operation).",
+      "Learn the golden rule about trusting client input.",
+      "Answer the task."
+    ],
+    "task": "The golden rule: should you TRUST data coming from the client? Answer true or false.",
+    "hint": "The attacker fully controls the request, so the client can never be trusted.",
+    "answer_sha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa"
+  },
+  {
     "id": "tm",
     "title": "Threat Modeling \u2014 STRIDE",
     "topic": "threat modeling",
     "dir": "threat-modeling",
+    "summary": "Threat modeling finds design flaws early. STRIDE = Spoofing, Tampering, Repudiation, Information disclosure, Denial of service, Elevation of privilege.",
+    "objectives": [
+      "Read the six STRIDE categories in the briefing.",
+      "Study the flaw: a session token is just base64('username:role').",
+      "Decide what the attacker achieves by forging 'admin:admin'.",
+      "Match it to ONE STRIDE category and submit that word."
+    ],
     "task": "Which STRIDE category is a forgeable 'admin:admin' session token? Submit one word.",
     "hint": "The attacker pretends to be someone they are not.",
     "answer_sha256": "a28d0cfe57e63557d391b2c693ee3abd6f6472ce35d5d78a952f2ddcb253fbd0"
@@ -13,8 +36,15 @@
     "title": "SAST \u2014 find the bug in source",
     "topic": "SAST",
     "dir": "sast",
-    "task": "Run rooms/sast/scan.py on vulnerable_example.py. What vulnerability class (two words) does it report?",
-    "hint": "shell=True with user input.",
+    "summary": "SAST reads source code (without running it) to flag risky patterns, like user input reaching a shell command.",
+    "objectives": [
+      "Open rooms/sast/vulnerable_example.py and read ping_host().",
+      "Run: cd rooms/sast && python3 scan.py vulnerable_example.py",
+      "Read the line number and the vulnerability class it reports.",
+      "Submit that vulnerability class (two words)."
+    ],
+    "task": "What vulnerability class does the scanner report on the shell=True line? (two words)",
+    "hint": "subprocess with shell=True plus user input.",
     "answer_sha256": "5e8e5af630e323f31857c1cc395ce98e2bf222272a7adf06b13a4ba4154b1893"
   },
   {
@@ -22,8 +52,15 @@
     "title": "DAST \u2014 attack the running app",
     "topic": "DAST",
     "dir": "dast",
-    "task": "Attack /greet with a <script> payload on the appsec app. OWASP 3-letter abbreviation?",
-    "hint": "Reflected script in the page.",
+    "summary": "DAST attacks the running app to confirm real exploitability. Classic: reflected XSS, where your input is echoed into the page unescaped.",
+    "objectives": [
+      "Start the appsec app: cd appsec-lab, set up its venv, python3 run_server.py.",
+      "In a second terminal, curl /greet with a <script> payload.",
+      "See your script reflected unescaped in the response.",
+      "Identify the OWASP vuln (3-letter abbreviation) and submit it."
+    ],
+    "task": "Attacking /greet with a <script> payload is which OWASP vuln? (3-letter abbreviation)",
+    "hint": "Reflected script running in the page.",
     "answer_sha256": "58e0413224af6b6d3505dd1819d02491c34588de7a4dc6a9ad48a8f7e08e2f7b"
   },
   {
@@ -31,8 +68,15 @@
     "title": "AppSec \u2014 capture a real flag",
     "topic": "application security",
     "dir": "appsec",
-    "task": "Exploit the IDOR on the CTF target (GET /api/account/3) and paste the FLAG{...}.",
-    "hint": "Read the admin account id 3; the flag is in secret_note.",
+    "summary": "IDOR = returning an object by id with no ownership check. Change the id, read someone else's data.",
+    "objectives": [
+      "Start the CTF target: cd ctf-lab, set up its venv, python3 target/run_target.py.",
+      "In a second terminal: curl http://127.0.0.1:5000/api/account/3 (you are NOT admin).",
+      "Find the FLAG{...} in the secret_note field.",
+      "Submit the exact flag."
+    ],
+    "task": "Exploit the IDOR (GET /api/account/3) and paste the FLAG{...} you captured.",
+    "hint": "Account id 3 is the admin; the flag is in secret_note.",
     "answer_sha256": "02f6808c96e8e9d4e3d9fd380de47dbff18635039f88ab5b4bf1dc8e98cd5cae"
   },
   {
@@ -40,8 +84,15 @@
     "title": "CI/CD Security \u2014 the release gate",
     "topic": "DevSecOps / CI-CD",
     "dir": "cicd",
-    "task": "Run the devsecops gate on the samples with --fail-on HIGH. What exit code blocks the release?",
-    "hint": "Non-zero means stop.",
+    "summary": "A DevSecOps gate collects scanner findings and returns an exit code: 0 lets CI continue, non-zero blocks the build.",
+    "objectives": [
+      "cd devsecops-lab.",
+      "Run the gate on the samples with --fail-on HIGH (command in the briefing).",
+      "Read the FAIL output, then run: echo $? to see the exit code.",
+      "Submit that exit code (a number)."
+    ],
+    "task": "What exit code does the gate return when it blocks the release? Submit the number.",
+    "hint": "Non-zero means stop; it is a single digit.",
     "answer_sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
   }
 ]
