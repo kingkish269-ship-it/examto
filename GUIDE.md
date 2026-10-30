@@ -88,8 +88,37 @@ python3 coach.py reset    # start over
 ```
 
 Your progress is saved locally, so you can stop any time and resume later. There
-are 14 tasks across all 10 labs; finishing them means you have worked through
+are 16 tasks across all 10 labs; finishing them means you have worked through
 the whole program.
+
+### Prefer clicking to typing? Use the GUI
+
+If the terminal feels unfamiliar, run the browser dashboard instead:
+
+```bash
+python3 dashboard.py
+```
+
+In a Codespace a popup offers to open the forwarded **port 5000** — click it (or
+open the **Ports** tab and click the globe). You get a web page listing every
+task with a progress bar; read the current task, copy its command into a
+terminal, then press **Run check** to be graded. It shares progress with
+`coach.py`, so you can switch between them freely.
+
+### Absolute beginner, want fully graphical lessons?
+
+These labs are hands-on and assume a little comfort with running commands. If
+you are starting from zero and want polished, click-through, browser-based
+lessons made for beginners, use these free resources alongside this repo:
+
+- **TryHackMe** — free beginner rooms and a "Pre Security" / "Intro to Cyber"
+  path, all in the browser (https://tryhackme.com).
+- **PortSwigger Web Security Academy** — free, interactive web-security labs
+  (https://portswigger.net/web-security).
+- **picoCTF** — beginner capture-the-flag in the browser (https://picoctf.org).
+
+Do a beginner path there to build confidence, then come back and the GUI
+dashboard here will make much more sense.
 
 ## 4. How a lab works (the method that makes it stick)
 
