@@ -37,6 +37,10 @@ Built for an engineer already strong in endpoint, network, cloud, and data
 security who wants demonstrable automation, application security, and DevSecOps
 skill. Each lab's core logic is tested so you can prove it works.
 
+> **Beginner to AppSec? Start with the course:** [`appsec-course/`](appsec-course/)
+> — one folder, 23 modules, each with easy theory + a step-by-step lab. Read it,
+> do it, and you'll have hands-on AppSec experience by the end.
+
 ## Labs
 
 | # | Lab | What you build | Runtime |
