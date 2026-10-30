@@ -30,20 +30,26 @@ Tip for the split-screen feel: keep one terminal for `rooms.py` and open a
 second terminal (the **+** in the terminal panel) to run the task commands —
 briefing on one side, machine on the other.
 
-## The rooms (your requested topics)
+## The curriculum (25 modules, in order)
 
-| Room | Topic | You will |
-|---|---|---|
-| `tm` | Threat modeling (STRIDE) | classify a real design flaw |
-| `sast` | SAST | run a scanner and name the bug it finds |
-| `dast` | DAST | attack a running app and identify the flaw |
-| `appsec` | Application security | exploit an IDOR and capture a real flag |
-| `cicd` | DevSecOps / CI-CD | run a release gate and read its exit code |
+A complete Application Security + DevSecOps path, focused on what an
+endpoint/cloud/network/data background does not already cover — aimed at senior
+AppSec / Product Security / DevSecOps roles.
 
-Each room's briefing is in its folder (`threat-modeling/`, `sast/`, `dast/`,
-`appsec/`, `cicd/`). The deeper, full versions of each topic are the labs:
-`appsec-lab/`, `ctf-lab/`, `devsecops-lab/`, and the threat-modeling template in
-`appsec-lab/threat-modeling/`.
+**Foundations:** `intro`, `http`
+**OWASP Top 10 (web):** `access`, `inject`, `xss`, `ssrf`, `authn`, `crypto`,
+`deser`, `misconfig`
+**Hands-on milestone:** `appsec` (capture a real flag)
+**Modern & API:** `api`, `llm`
+**Process:** `tm` (threat modeling), `review` (secure code review)
+**DevSecOps pipeline:** `sast`, `dast`, `sca`, `secrets`, `cicd`
+**Cloud-native:** `iac`, `containers`, `k8s`, `supplychain`
+**Career:** `interview` (landing the ₹70+ LPA role)
+
+Each module's briefing is in its folder; the deep, full versions are the labs
+(`appsec-lab/`, `ctf-lab/`, `devsecops-lab/`, `iac-security-lab/`,
+`container-k8s-lab/`, `supply-chain-lab/`, `llm-security-lab/`). Do them in the
+order above — that is the learning path.
 
 ## Why this gets you job-ready
 
