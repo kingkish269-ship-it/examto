@@ -53,8 +53,12 @@ data, not SQL.
 - Insecure: the injection returns all users.
 - Secure: the same input returns nothing.
 
-Optional real tool (local only): `pip install sqlmap` then
-`sqlmap -u "http://127.0.0.1:5000/api/search?username=alice" --batch`.
+Real tool (verified — via `tools-lab/`): with the app running,
+```bash
+sqlmap -u "http://127.0.0.1:5000/api/search?username=alice" -p username --batch
+```
+sqlmap confirms the `username` parameter is injectable — the same flaw, found by
+the industry-standard tool.
 
 ## Key takeaways
 

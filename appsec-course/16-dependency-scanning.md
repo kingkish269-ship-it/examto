@@ -22,8 +22,14 @@ This analyses a sample SBOM and flags vulnerable components (e.g. an old
 `requests`, `pyyaml`, `urllib3`) and an unpinned one. Read each finding: the
 component, the CVE, and the fixed version.
 
-Real tool (optional): `trivy fs /workspaces/examto` scans the whole repo's
-dependencies against a live CVE database.
+Real tools (verified — install via `tools-lab/`):
+```bash
+# pip-audit on a deliberately old dependency:
+printf 'requests==2.19.0\n' > /tmp/vreq.txt
+pip-audit -r /tmp/vreq.txt          # reports known CVEs + fix versions
+# Trivy on the whole repo's dependencies:
+trivy fs /workspaces/examto
+```
 
 ## Verify
 

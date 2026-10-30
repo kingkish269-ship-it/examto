@@ -56,3 +56,17 @@ supply-chain lesson, module 22.)
 If you install only one thing: **OWASP ZAP** (DAST) plus **Semgrep** (SAST).
 Between them they cover most of the pipeline, and both are free and widely used
 in real jobs.
+
+## Run the real tools against our labs (verified)
+
+Don't just read about them — **[`tools-lab/`](../tools-lab/README.md)** installs
+the real tools and runs them against this repo's labs, with the expected output
+shown:
+
+```bash
+cd tools-lab && bash install.sh && source .venv/bin/activate
+bash run_real_tools.sh
+```
+
+Bandit, Semgrep, Checkov, pip-audit and sqlmap all fire on our intentional
+vulnerabilities — real hands-on with the industry tools.
