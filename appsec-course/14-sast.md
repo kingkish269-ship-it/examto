@@ -26,10 +26,19 @@ bandit -r /workspaces/examto/appsec-lab/vulnerable_app
 Bandit reports issues like `subprocess` with `shell=True`, weak MD5, and
 `pickle`. Optional: `pip install semgrep && semgrep --config auto /workspaces/examto/appsec-lab`.
 
+Also run **Semgrep** (the headline multi-language SAST tool) with our ruleset:
+```bash
+cd /workspaces/examto
+semgrep scan --config appsec-lab/tools/semgrep-rules.yml appsec-lab/vulnerable_app
+```
+It reports **5 findings** (MD5 password, unvalidated urlopen/SSRF, subprocess
+`shell=True`, pickle). `tools-lab/` installs and runs these for you.
+
 ## Verify
 
 - The mini scanner reports `COMMAND INJECTION`.
-- Bandit lists findings against the vulnerable app.
+- Bandit lists findings (MD5 High, SQLi, pickle, subprocess, hardcoded secrets).
+- Semgrep reports 5 findings with the lab ruleset.
 
 ## Key takeaways
 

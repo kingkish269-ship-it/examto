@@ -32,7 +32,12 @@ python3 scan.py terraform/sample_plan_secure.json
 echo "exit code: $?"
 ```
 
-Real tool (optional): `pip install checkov && checkov -d terraform/insecure`.
+Real tool (verified — via `tools-lab/`):
+```bash
+checkov -d /workspaces/examto/iac-security-lab/terraform/insecure --compact
+```
+Checkov reports ~31 failed checks on our insecure Terraform (SSH/RDP open to the
+internet, RDS unencrypted, public S3, …); the secure folder passes.
 
 ## Verify
 

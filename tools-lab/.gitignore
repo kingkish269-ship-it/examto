@@ -1,0 +1,3 @@
+.venv/
+.semgrep_settings.yml
+__pycache__/
