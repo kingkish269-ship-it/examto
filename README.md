@@ -3,7 +3,11 @@
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/kingkish269-ship-it/examto)
 
 **Run it entirely in your browser — no local setup.** Click the badge above to
-open a Codespace; it auto-installs everything, then run `python3 coach.py`.
+open a Codespace; it auto-installs everything. Then either:
+
+- **Clickable GUI (easiest for beginners):** `python3 dashboard.py` → open the
+  forwarded port 5000 → read each task and press **Run check**.
+- **Terminal coach:** `python3 coach.py`.
 
 Hands-on labs for building the practical skills behind senior cloud, product, and
 DevSecOps security roles. Everything uses free, open-source tooling. No paid
