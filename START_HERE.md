@@ -6,6 +6,22 @@ locally. You do not need to install anything beyond Python to begin.
 
 If you only read one file, read this one.
 
+## The fastest way: the self-guided coach (no help needed)
+
+Run this and it drives the whole program for you — it tells you the next task,
+runs the check itself, and grades you PASS/FAIL. Your progress is saved, so you
+can stop and resume any time. No internet, no account, no asking anyone.
+
+```bash
+python3 coach.py            # see progress and your next task
+python3 coach.py task       # full details for the current task
+python3 coach.py check      # grade it; advances automatically on PASS
+python3 coach.py list       # every task and its status
+```
+
+Work through all 12 tasks and you have completed every lab. That is the only
+loop you need. Everything below is background.
+
 ## The rule that makes it work
 
 For every lab: **run it, read the small amount of code that matters, explain the
