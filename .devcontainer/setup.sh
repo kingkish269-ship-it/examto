@@ -6,8 +6,10 @@ set -e
 
 echo "Setting up the security labs..."
 
-# Flask powers the clickable GUI dashboard (dashboard.py).
-python3 -m pip install --quiet flask || pip install --quiet flask || true
+# Flask powers the clickable GUI (dashboard.py) and the two-pane web lab
+# (webapp/app.py, which also needs flask-sock for the embedded terminal).
+python3 -m pip install --quiet flask flask-sock simple-websocket \
+  || pip install --quiet flask flask-sock simple-websocket || true
 
 for lab in appsec-lab ctf-lab; do
   if [ -f "$lab/requirements.txt" ]; then
