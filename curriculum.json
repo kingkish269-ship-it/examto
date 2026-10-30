@@ -94,5 +94,37 @@
     "teach": "The capstone: aggregate findings from Semgrep, Trivy, and Gitleaks, apply a policy, and block the release. This is the DevSecOps decision most engineers miss.",
     "do": "cd devsecops-lab && python3 -m gate.run_gate --semgrep samples/semgrep_sample.json --trivy samples/trivy_sample.json --gitleaks samples/gitleaks_sample.json --fail-on HIGH",
     "verify": {"cmd": "python3 -m gate.run_gate --semgrep samples/semgrep_sample.json --trivy samples/trivy_sample.json --gitleaks samples/gitleaks_sample.json --fail-on HIGH", "cwd": "devsecops-lab", "contains": "FAIL"}
+  },
+  {
+    "id": "llm-demo",
+    "lab": "llm-security-lab",
+    "title": "Attack and defend an AI assistant",
+    "teach": "The OWASP Top 10 for LLM apps: prompt injection, insecure output handling, secret disclosure, and excessive agency. The demo shows each attack succeed, then be blocked by guardrails.",
+    "do": "cd llm-security-lab && python3 demo.py",
+    "verify": {"cmd": "python3 demo.py", "cwd": "llm-security-lab", "contains": "contained in SECURE mode"}
+  },
+  {
+    "id": "llm-tests",
+    "lab": "llm-security-lab",
+    "title": "Verify the LLM guardrails",
+    "teach": "Each guardrail (injection screening, output encoding, secret redaction, tool authorization) has a test proving the attack is blocked.",
+    "do": "cd llm-security-lab && python3 -m unittest discover",
+    "verify": {"cmd": "python3 -m unittest discover", "cwd": "llm-security-lab", "contains": "OK"}
+  },
+  {
+    "id": "detection-run",
+    "lab": "detection-lab",
+    "title": "Detect attacks in security logs",
+    "teach": "The blue-team side: detection rules over logs catch brute force, SQLi, path traversal, privilege escalation, and impossible travel. This is core SOC / detection-engineering work.",
+    "do": "cd detection-lab && python3 run_detections.py",
+    "verify": {"cmd": "python3 run_detections.py", "cwd": "detection-lab", "contains": "privilege-escalation"}
+  },
+  {
+    "id": "detection-tests",
+    "lab": "detection-lab",
+    "title": "Verify the detection rules",
+    "teach": "Each rule is tested two ways: it must fire on the attack and stay quiet on benign traffic. That paired test is what makes a detection production-ready.",
+    "do": "cd detection-lab && python3 -m unittest discover",
+    "verify": {"cmd": "python3 -m unittest discover", "cwd": "detection-lab", "contains": "OK"}
   }
 ]

@@ -1,0 +1,20 @@
+[
+  {"ts": 1000, "type": "auth", "action": "login_success", "user": "alice", "src_ip": "10.0.0.5", "country": "US"},
+  {"ts": 1010, "type": "http", "method": "GET", "path": "/products?id=10", "status": 200, "src_ip": "10.0.0.5"},
+
+  {"ts": 2000, "type": "auth", "action": "login_failed", "user": "admin", "src_ip": "203.0.113.9", "country": "RU"},
+  {"ts": 2005, "type": "auth", "action": "login_failed", "user": "admin", "src_ip": "203.0.113.9", "country": "RU"},
+  {"ts": 2010, "type": "auth", "action": "login_failed", "user": "admin", "src_ip": "203.0.113.9", "country": "RU"},
+  {"ts": 2015, "type": "auth", "action": "login_failed", "user": "root", "src_ip": "203.0.113.9", "country": "RU"},
+  {"ts": 2020, "type": "auth", "action": "login_failed", "user": "root", "src_ip": "203.0.113.9", "country": "RU"},
+  {"ts": 2025, "type": "auth", "action": "login_failed", "user": "svc", "src_ip": "203.0.113.9", "country": "RU"},
+
+  {"ts": 3000, "type": "http", "method": "GET", "path": "/search?q=' OR '1'='1", "status": 200, "src_ip": "198.51.100.7"},
+  {"ts": 3100, "type": "http", "method": "GET", "path": "/download?file=../../etc/passwd", "status": 200, "src_ip": "198.51.100.7"},
+
+  {"ts": 4000, "type": "auth", "action": "login_success", "user": "bob", "src_ip": "10.0.0.9", "country": "US"},
+  {"ts": 4300, "type": "auth", "action": "login_success", "user": "bob", "src_ip": "41.63.0.2", "country": "NG"},
+
+  {"ts": 5000, "type": "iam", "action": "add_admin", "actor": "mallory", "target": "mallory"},
+  {"ts": 5200, "type": "iam", "action": "add_admin", "actor": "secops", "target": "newhire"}
+]
