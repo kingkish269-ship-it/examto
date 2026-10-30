@@ -1,0 +1,4 @@
+.progress.json
+exercises_bak/
+__pycache__/
+*.pyc

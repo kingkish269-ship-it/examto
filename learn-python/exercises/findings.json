@@ -1,0 +1,5 @@
+[
+  {"id": "F1", "severity": "HIGH", "title": "Public S3 bucket"},
+  {"id": "F2", "severity": "LOW", "title": "Verbose errors"},
+  {"id": "F3", "severity": "HIGH", "title": "SSH open to internet"}
+]
