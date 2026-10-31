@@ -1,0 +1,54 @@
+{
+  "order": 5,
+  "id": "xss",
+  "title": "Cross-Site Scripting",
+  "track": "OWASP Top 10",
+  "difficulty": "core",
+  "estimate": "20 min",
+  "brief": "**Ticket:** a greeting page reflects your name straight into the HTML. A simulated admin bot visits pages. Land a script and steal what the bot leaks.",
+  "theory": "## Reflected XSS (OWASP A03)\nThe app puts your input into HTML without encoding, so `<script>` runs in the victim's browser \u2014 stealing cookies, acting as them.\n\n**Fix:** contextual output encoding (`<` becomes `&lt;`) plus a Content-Security-Policy.",
+  "worked_example": "```\n$ curl \"https://x/greet?name=<script>steal()</script>\"\n<h1>Hello <script>steal()</script></h1>   # runs in the victim's browser\n```",
+  "knowledge_check": [
+    {
+      "q": "The fix is output ___",
+      "type": "choice",
+      "choices": [
+        "encoding",
+        "caching",
+        "compression",
+        "logging"
+      ],
+      "answer_sha256": "e8424ea5339b85a750ab5f4c63bde5d5c62975792a3bed6ccb37c045207c6771"
+    },
+    {
+      "q": "XSS code runs in the ___",
+      "type": "choice",
+      "choices": [
+        "server",
+        "database",
+        "victim's browser",
+        "firewall"
+      ],
+      "answer_sha256": "94abb40cb1bed7e13928fedcc31c300178ad7e389f7c898484c7fd51e0b9defd"
+    }
+  ],
+  "investigation": {
+    "intro": "Send a script payload; the admin bot 'runs' it and leaks its cookie in a response header.",
+    "steps": [
+      "```bash\ncd /workspaces/examto/ctf-lab\npython3 -m venv .venv 2>/dev/null; . .venv/bin/activate 2>/dev/null; pip install -q -r requirements.txt\npython3 target/run_target.py        # leave this running\n```",
+      "In a second terminal, send a script payload and read the response headers:\n```bash\ncurl -s -D - \"http://127.0.0.1:5000/greet?name=<script>x</script>\" -o /dev/null\n```",
+      "Look for the `X-Admin-Cookie` header \u2014 its value is the flag."
+    ],
+    "hints": [
+      "A <script> tag or onerror= triggers the bot.",
+      "Read the response headers, not the body (-D -).",
+      "The flag is in the X-Admin-Cookie header."
+    ]
+  },
+  "capture": {
+    "task": "**Capture the flag.** Land an XSS payload and submit the value of the `X-Admin-Cookie` header.",
+    "hint": "curl -D - with a <script> name, read X-Admin-Cookie",
+    "placeholder": "FLAG{...}",
+    "answer_sha256": "111ad9bfd2d40106b119af42deba531bf2fc621891995ef8af6a15b7067b3a1d"
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "order": 8,
+  "id": "crypto",
+  "title": "Crypto & Secrets",
+  "track": "OWASP Top 10",
+  "difficulty": "core",
+  "estimate": "15 min",
+  "brief": "**Ticket:** a developer left a signing key in the source and stored passwords with MD5. Find the leaked secret and recover it.",
+  "theory": "## Cryptographic failures (OWASP A02)\nPasswords need a **salted, slow** hash (bcrypt/scrypt/argon2/PBKDF2) \u2014 never MD5/SHA1. **Secrets** belong in env vars or a vault, never in code; rotate anything ever committed.",
+  "worked_example": "```\n$ grep -rn \"API_KEY\" .\nconfig.py:3:API_KEY = \"sk-live-abc123\"   # committed secret \u2014 rotate it!\n```",
+  "knowledge_check": [
+    {
+      "q": "Passwords need a salted, ___ hash",
+      "type": "choice",
+      "choices": [
+        "fast",
+        "slow",
+        "reversible",
+        "plain"
+      ],
+      "answer_sha256": "5e0cf7bd1dfa3831788b0cf6dedcdd228fba6f34dc238d371e746567e80bc7b6"
+    },
+    {
+      "q": "Secrets belong in ___",
+      "type": "choice",
+      "choices": [
+        "source code",
+        "a vault / env vars",
+        "the README",
+        "code comments"
+      ],
+      "answer_sha256": "44b47e64f6696a8267a3c9e1e33cc9e789b7dbe5893a8d8766262d4d7fc6f29f"
+    }
+  ],
+  "investigation": {
+    "intro": "Hunt the source for a hardcoded secret.",
+    "steps": [
+      "```bash\ncd /workspaces/examto/appsec-lab\npython3 -m venv .venv 2>/dev/null; . .venv/bin/activate 2>/dev/null; pip install -q -r requirements.txt\n# (no server needed for this one)\n```",
+      "Search the source for the committed secret:\n```bash\ncd /workspaces/examto/appsec-lab\ngrep -n \"s3cr3t\" vulnerable_app/app.py\n```",
+      "The grep prints the hardcoded signing key \u2014 that is what you recover."
+    ],
+    "hints": [
+      "Secrets are often named 'key', 'secret', or 'token'.",
+      "Grep the app.py file.",
+      "The value starts with s3cr3t-..."
+    ]
+  },
+  "capture": {
+    "task": "**Capture the secret.** Submit the hardcoded signing-key string you recovered from the source.",
+    "hint": "grep the source for s3cr3t",
+    "placeholder": "the recovered secret",
+    "answer_sha256": "a0c0c3c256b7eff125ba54cecdd2235d075f51fc00d22df0fca3eba5c15316e2"
+  }
+}

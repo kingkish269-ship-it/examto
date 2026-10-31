@@ -1,10 +1,22 @@
-# Web Lab — theory left, terminal right (in your browser)
+# Web Lab — Hackversity-style guided rooms with a live terminal
 
-A two-pane web page, TryHackMe / Hackversity style, running in your Codespace:
+A three-pane web page running in your Codespace:
 
-- **Left:** clickable modules; each shows LEARN + OBJECTIVES + briefing + a flag box.
+- **Left rail:** the room's six sections with progress ticks.
+- **Middle:** the current section's content.
 - **Right:** a real **bash terminal** on your Codespace (the machine).
-- Submitting a flag is graded and shared with `rooms.py`.
+
+Each module is a full room with six sections (exactly like Hackversity):
+1. **Mission brief** — the scenario and what to find.
+2. **Theory** — the concept, plain English.
+3. **Worked example** — the technique run once on another machine.
+4. **Knowledge check** — several graded questions (wrong answers cost nothing).
+5. **Investigation** — step-by-step, with hints; you run the commands in the terminal.
+6. **Capture the flag** — submit the flag you recovered.
+
+Content lives in `modules/*.json` (one file per room). Progress is saved in
+`.web_progress.json` (git-ignored). Capture flags for the exploit rooms are the
+real `ctf-lab` flags, so you genuinely capture them from the running target.
 
 ## Run it (one command)
 

