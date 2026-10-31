@@ -6,23 +6,21 @@ A two-pane web page, TryHackMe / Hackversity style, running in your Codespace:
 - **Right:** a real **bash terminal** on your Codespace (the machine).
 - Submitting a flag is graded and shared with `rooms.py`.
 
-## Run it
-
-In your Codespace (dependencies are installed automatically by the dev container):
+## Run it (one command)
 
 ```bash
 cd /workspaces/examto
-python3 webapp/app.py
+bash webapp/start.sh
 ```
 
-Then open the **port 5000** popup → **Open in Browser**. You'll get the split
-page: pick a module on the left, do the objective commands in the terminal on
-the right, and submit the flag.
+This installs the terminal backend if needed, then starts the server. Open the
+**port 5000** popup → **Open in Browser**. The page loads with the modules on
+the left and a terminal on the right that **connects automatically** — no
+Ctrl+`, no VS Code. Pick a module, run the commands in the right-hand terminal,
+and submit the flag on the left.
 
-If you run it outside the Codespace, install the deps first:
-```bash
-pip install -r webapp/requirements.txt
-```
+(You're viewing a plain browser tab, so VS Code shortcuts like Ctrl+` do not
+apply here — the terminal in the page is your terminal.)
 
 ## Terminal shows "[terminal closed]"?
 
