@@ -1,0 +1,54 @@
+{
+  "order": 17,
+  "id": "sca",
+  "title": "Dependency Scanning (SCA)",
+  "track": "DevSecOps",
+  "difficulty": "core",
+  "estimate": "15 min",
+  "brief": "**Ticket:** our dependencies may carry known CVEs. Scan them and name the critical package.",
+  "theory": "## SCA\nSoftware Composition Analysis inventories dependencies and flags known-vulnerable (CVE) and unpinned ones. Tools: Trivy, Grype, OWASP Dependency-Check, pip-audit. Reads from an SBOM.",
+  "worked_example": "```\n$ pip-audit -r reqs.txt\nrequests 2.19.0  PYSEC-2018-28  fix 2.20.0\n```",
+  "knowledge_check": [
+    {
+      "q": "SCA scans your ___ for known CVEs",
+      "type": "choice",
+      "choices": [
+        "dependencies",
+        "firewall rules",
+        "HTML",
+        "DNS records"
+      ],
+      "answer_sha256": "2188dfc2d889b53230f6891977d505642d718b940aa3eec23985afb379141dcd"
+    },
+    {
+      "q": "A machine-readable inventory of components is an ___",
+      "type": "choice",
+      "choices": [
+        "SBOM",
+        "SLA",
+        "SSH",
+        "SSL"
+      ],
+      "answer_sha256": "98f3ae1ef67113d8140d4f6cb8d2830070e21ea48f091be519659846c771a374"
+    }
+  ],
+  "investigation": {
+    "intro": "Run the SBOM analyzer and read the flagged components.",
+    "steps": [
+      "```bash\ncd /workspaces/examto/supply-chain-lab\npython3 scan.py\n```",
+      "It lists vulnerable components; one is marked CRITICAL.",
+      "Real tool: `tools-lab/` -> `pip-audit` / `trivy fs`."
+    ],
+    "hints": [
+      "Look for the CRITICAL severity line.",
+      "It's a YAML library.",
+      "pyyaml."
+    ]
+  },
+  "capture": {
+    "task": "**Name the critical package.** Which component does the scan flag as CRITICAL? (one word)",
+    "hint": "A YAML parser with a code-exec CVE.",
+    "placeholder": "answer",
+    "answer_sha256": "ebb0e16545c911bd31ec33ace57dedf84c04e673d2dc28c0290868e4adf4db77"
+  }
+}

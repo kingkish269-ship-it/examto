@@ -1,0 +1,54 @@
+{
+  "order": 15,
+  "id": "sast",
+  "title": "SAST",
+  "track": "DevSecOps",
+  "difficulty": "core",
+  "estimate": "15 min",
+  "brief": "**Ticket:** add static scanning to the pipeline. Run a scanner and name what it finds.",
+  "theory": "## SAST\nReads source without running it, flags risky patterns (source -> sink). Tools: **Bandit** (Python), **Semgrep** (multi-language). Fast, runs in CI, has false positives.",
+  "worked_example": "```\n$ bandit -r app/\n>> Issue: [B602] subprocess with shell=True ... Severity: High\n```",
+  "knowledge_check": [
+    {
+      "q": "SAST analyses the application by:",
+      "type": "choice",
+      "choices": [
+        "reading source without running it",
+        "attacking it live",
+        "scanning the network",
+        "reading logs"
+      ],
+      "answer_sha256": "5328765d1202bb87847cedeadf67b16a301a7d903c1b20686add7889bd9cc73c"
+    },
+    {
+      "q": "A free Python SAST tool is:",
+      "type": "choice",
+      "choices": [
+        "Bandit",
+        "Wireshark",
+        "nmap",
+        "curl"
+      ],
+      "answer_sha256": "07299a3f8843d2cde6e11075c597b2ce9868221d2a401aba32abf05bd455af23"
+    }
+  ],
+  "investigation": {
+    "intro": "Run the mini scanner (and the real Bandit via tools-lab) on the vulnerable code.",
+    "steps": [
+      "```bash\ncd /workspaces/examto/rooms/sast\npython3 scan.py vulnerable_example.py\n```",
+      "It reports the vulnerability class on the shell=True line.",
+      "Real tool: `tools-lab/` installs Bandit -> `bandit -r appsec-lab/vulnerable_app`."
+    ],
+    "hints": [
+      "The scanner prints the class in CAPS.",
+      "It's about a shell command.",
+      "command injection."
+    ]
+  },
+  "capture": {
+    "task": "**What did SAST find?** The vulnerability class the scanner reports on the shell=True line (two words).",
+    "hint": "shell=True + user input.",
+    "placeholder": "answer",
+    "answer_sha256": "5e8e5af630e323f31857c1cc395ce98e2bf222272a7adf06b13a4ba4154b1893"
+  }
+}

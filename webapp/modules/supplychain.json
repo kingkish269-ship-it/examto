@@ -1,0 +1,54 @@
+{
+  "order": 23,
+  "id": "supplychain",
+  "title": "Supply Chain Security",
+  "track": "Cloud-native",
+  "difficulty": "advanced",
+  "estimate": "15 min",
+  "brief": "**Ticket:** prove what's in our build and that it's ours. Name the component inventory.",
+  "theory": "## Supply chain\nKnow and trust the build: **SBOM** (inventory, via Syft), **signing** (Cosign), **provenance/SLSA**. Pin deps, restrict CI permissions, protect branches.",
+  "worked_example": "```\n$ syft dir:. -o cyclonedx-json > sbom.json\n$ cosign sign <image>\n```",
+  "knowledge_check": [
+    {
+      "q": "A machine-readable inventory of software components is an ___",
+      "type": "choice",
+      "choices": [
+        "SBOM",
+        "SLA",
+        "SSO",
+        "SLO"
+      ],
+      "answer_sha256": "98f3ae1ef67113d8140d4f6cb8d2830070e21ea48f091be519659846c771a374"
+    },
+    {
+      "q": "Signing artifacts (so consumers verify them) uses ___",
+      "type": "choice",
+      "choices": [
+        "Cosign",
+        "curl",
+        "nmap",
+        "grep"
+      ],
+      "answer_sha256": "5d55da39858da0af660e60d0ced267a9a870c95bb928e2979ec677baefe88f96"
+    }
+  ],
+  "investigation": {
+    "intro": "Analyze an SBOM and read the supply-chain exercises.",
+    "steps": [
+      "```bash\ncd /workspaces/examto/supply-chain-lab\npython3 scan.py\ncat exercises/01_generate_sbom.md\n```",
+      "The scan reads a CycloneDX SBOM and flags risky components.",
+      "The inventory format is the answer below."
+    ],
+    "hints": [
+      "Software Bill of Materials.",
+      "4-letter abbreviation.",
+      "SBOM."
+    ]
+  },
+  "capture": {
+    "task": "**Name the inventory.** A machine-readable list of all components in your software is an ___ (4 letters).",
+    "hint": "Software Bill of Materials.",
+    "placeholder": "answer",
+    "answer_sha256": "98f3ae1ef67113d8140d4f6cb8d2830070e21ea48f091be519659846c771a374"
+  }
+}

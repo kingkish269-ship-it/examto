@@ -1,0 +1,48 @@
+{
+  "order": 14,
+  "id": "review",
+  "title": "Secure Code Review",
+  "track": "Process",
+  "difficulty": "core",
+  "estimate": "15 min",
+  "brief": "**Ticket:** review a service like a pull request and find the dangerous sinks.",
+  "theory": "## Secure code review\nHunt for untrusted **source** reaching a dangerous **sink**: SQL concatenation, `subprocess shell=True`, `verify=False`, hardcoded secrets, `pickle.loads`, path joins, unescaped HTML. For each: finding, impact, fix.",
+  "worked_example": "```python\nsubprocess.run(cmd, shell=True)   # command injection\nrequests.get(url, verify=False)    # TLS off\n```",
+  "knowledge_check": [
+    {
+      "q": "subprocess.run(cmd, shell=True) on user input is which injection? (two words)",
+      "type": "command",
+      "answer_sha256": "5e8e5af630e323f31857c1cc395ce98e2bf222272a7adf06b13a4ba4154b1893"
+    },
+    {
+      "q": "requests.get(url, verify=False) disables ___ verification",
+      "type": "choice",
+      "choices": [
+        "TLS",
+        "DNS",
+        "MAC",
+        "CPU"
+      ],
+      "answer_sha256": "b7e651cbb43ba0ca3498759c8c3596c3a11a199004cd9e5a198d50d4585ec8c5"
+    }
+  ],
+  "investigation": {
+    "intro": "Grep the lab app for dangerous sinks, then read them in context.",
+    "steps": [
+      "```bash\ncd /workspaces/examto/appsec-lab\ngrep -nE \"shell=True|verify=False|pickle.loads|hashlib.md5\" vulnerable_app/app.py\n```",
+      "Open vulnerable_app/app.py and read each hit; the app pairs the vulnerable and fixed branch.",
+      "The subprocess line is your answer for the task."
+    ],
+    "hints": [
+      "Look at the /diag route.",
+      "It builds a shell command from user input.",
+      "command injection."
+    ]
+  },
+  "capture": {
+    "task": "**Name the bug.** `subprocess.run(cmd, shell=True)` with user input is which injection? (two words)",
+    "hint": "The OS runs it.",
+    "placeholder": "answer",
+    "answer_sha256": "5e8e5af630e323f31857c1cc395ce98e2bf222272a7adf06b13a4ba4154b1893"
+  }
+}

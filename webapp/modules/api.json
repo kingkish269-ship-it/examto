@@ -1,0 +1,54 @@
+{
+  "order": 11,
+  "id": "api",
+  "title": "API Security",
+  "track": "Modern",
+  "difficulty": "core",
+  "estimate": "15 min",
+  "brief": "**Ticket:** the mobile app talks to a JSON API. Confirm it leaks another user's object and name the flaw class.",
+  "theory": "## OWASP API Top 10\nThe #1 risk is **BOLA** (Broken Object Level Authorization) - the API's IDOR. Others: broken auth, broken function-level authz, **excessive data exposure** (returning more fields than needed), mass assignment, no rate limiting.\n\n**Fix:** authorize every object and function on the server; return only needed fields; rate-limit.",
+  "worked_example": "```\nGET /api/order/1001   -> {\"id\":1001,\"owner\":\"someone_else\",...}   # BOLA\n```",
+  "knowledge_check": [
+    {
+      "q": "OWASP API #1 (the API's IDOR) is abbreviated:",
+      "type": "choice",
+      "choices": [
+        "BOLA",
+        "CORS",
+        "CSRF",
+        "SSRF"
+      ],
+      "answer_sha256": "8b88c35eb7ba86b91d8c4b69d468df3d24931071206c07cc61c3aaff03aaea88"
+    },
+    {
+      "q": "Returning more fields than the client needs is called excessive data ___",
+      "type": "choice",
+      "choices": [
+        "exposure",
+        "entry",
+        "encoding",
+        "encryption"
+      ],
+      "answer_sha256": "b40356e6d1c6948bcb05c662bf5aa970a270424c9af61c9fc0c861f2e2269629"
+    }
+  ],
+  "investigation": {
+    "intro": "Hit an API object that isn't yours on the CTF target.",
+    "steps": [
+      "```bash\ncd /workspaces/examto/ctf-lab\npython3 -m venv .venv 2>/dev/null; . .venv/bin/activate 2>/dev/null; pip install -q -r requirements.txt\npython3 target/run_target.py\n```",
+      "In a second terminal:\n```bash\ncurl -s http://127.0.0.1:5000/api/account/3\n```",
+      "You read another user's object and it returned every field - that's BOLA + excessive data exposure."
+    ],
+    "hints": [
+      "IDOR in an API has a specific OWASP name.",
+      "Four letters, starts with B.",
+      "BOLA."
+    ]
+  },
+  "capture": {
+    "task": "**Name the flaw.** What is the 4-letter OWASP API abbreviation for returning an object by id with no ownership check?",
+    "hint": "The API version of IDOR.",
+    "placeholder": "answer",
+    "answer_sha256": "8b88c35eb7ba86b91d8c4b69d468df3d24931071206c07cc61c3aaff03aaea88"
+  }
+}

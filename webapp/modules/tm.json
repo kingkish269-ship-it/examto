@@ -1,0 +1,54 @@
+{
+  "order": 13,
+  "id": "tm",
+  "title": "Threat Modeling",
+  "track": "Process",
+  "difficulty": "core",
+  "estimate": "15 min",
+  "brief": "**Ticket:** before the login feature is built, threat-model it. Classify one real flaw with STRIDE.",
+  "theory": "## STRIDE\nSix threat categories: **S**poofing, **T**ampering, **R**epudiation, **I**nformation disclosure, **D**enial of service, **E**levation of privilege. Draw the data flow, mark trust boundaries, map each flow to STRIDE, pick a control.",
+  "worked_example": "For a file-download feature: Tampering = '../' changes which file is read; Information disclosure = it reads files outside the web root.",
+  "knowledge_check": [
+    {
+      "q": "STRIDE's 'E' is Elevation of ___",
+      "type": "choice",
+      "choices": [
+        "privilege",
+        "protocol",
+        "payload",
+        "process"
+      ],
+      "answer_sha256": "ffa2b8b37132b8d725d746f175d116439600c001322d58326b31ad692dee53c4"
+    },
+    {
+      "q": "Pretending to be another user is which STRIDE category?",
+      "type": "choice",
+      "choices": [
+        "Spoofing",
+        "Tampering",
+        "Repudiation",
+        "Denial of service"
+      ],
+      "answer_sha256": "a28d0cfe57e63557d391b2c693ee3abd6f6472ce35d5d78a952f2ddcb253fbd0"
+    }
+  ],
+  "investigation": {
+    "intro": "Read the template and model the login feature.",
+    "steps": [
+      "```bash\ncd /workspaces/examto/appsec-lab/threat-modeling\ncat TEMPLATE.md\ncat example_login_and_download.md\n```",
+      "Copy the template and fill it for login:\n```bash\ncp TEMPLATE.md /tmp/my_threat_model.md\n```",
+      "A forgeable 'admin:admin' session token lets an attacker impersonate admin - decide its STRIDE category for the task."
+    ],
+    "hints": [
+      "The attacker pretends to be someone they are not.",
+      "That is the 'S' in STRIDE.",
+      "Spoofing."
+    ]
+  },
+  "capture": {
+    "task": "**Classify the flaw.** A forgeable 'admin:admin' session token is which STRIDE category? (one word)",
+    "hint": "Pretending to be someone else.",
+    "placeholder": "answer",
+    "answer_sha256": "a28d0cfe57e63557d391b2c693ee3abd6f6472ce35d5d78a952f2ddcb253fbd0"
+  }
+}

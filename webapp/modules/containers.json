@@ -1,0 +1,54 @@
+{
+  "order": 21,
+  "id": "containers",
+  "title": "Container Security",
+  "track": "Cloud-native",
+  "difficulty": "core",
+  "estimate": "12 min",
+  "brief": "**Ticket:** harden a Docker image. Find what unsafe user the insecure image runs as.",
+  "theory": "## Container security\nPin base image by digest (not latest), run **non-root**, minimal base, read-only fs, drop capabilities, scan with Trivy. A container running as root is a key finding.",
+  "worked_example": "```\nFROM ubuntu:latest     # unpinned\n# no USER -> runs as root\n```",
+  "knowledge_check": [
+    {
+      "q": "Containers should run as a ___ user",
+      "type": "choice",
+      "choices": [
+        "non-root",
+        "root",
+        "admin",
+        "system"
+      ],
+      "answer_sha256": "8cee51d240d9ffd6e1daa569e47e0d71a52af9bd5e37d950232e73784b413107"
+    },
+    {
+      "q": "Base images should be pinned by ___ not 'latest'",
+      "type": "choice",
+      "choices": [
+        "digest",
+        "color",
+        "size",
+        "name"
+      ],
+      "answer_sha256": "0bf474896363505e5ea5e5d6ace8ebfb13a760a409b1fb467d428fc716f9f284"
+    }
+  ],
+  "investigation": {
+    "intro": "Lint the insecure Dockerfile.",
+    "steps": [
+      "```bash\ncd /workspaces/examto/container-k8s-lab\npython3 -c \"from validator.dockerfile_lint import lint;[print(f['rule']) for f in lint(open('manifests/insecure/Dockerfile').read())]\"\n```",
+      "It flags 'runs-as-root' among others.",
+      "Compare manifests/secure/Dockerfile to see the non-root fix."
+    ],
+    "hints": [
+      "The finding is 'runs-as-root'.",
+      "Which user is unsafe?",
+      "root."
+    ]
+  },
+  "capture": {
+    "task": "**Name the unsafe user.** A container should NOT run as which user? (one word)",
+    "hint": "The superuser.",
+    "placeholder": "answer",
+    "answer_sha256": "4813494d137e1631bba301d5acab6e7bb7aa74ce1185d456565ef51d737677b2"
+  }
+}
