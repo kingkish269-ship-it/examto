@@ -19,8 +19,10 @@ service, cloud account, or subscription is required to start.
 > **Want the TryHackMe/Hackversity split — theory on the left, a terminal on the
 > right, in your browser?** Run the web lab:
 > ```bash
-> python3 webapp/app.py      # open the forwarded port 5000
+> bash webapp/start.sh       # installs the terminal backend, then opens port 5000
 > ```
+> The terminal in the page connects automatically (you're in a browser tab, so
+> ignore VS Code's Ctrl+`).
 > Clickable modules (AppSec, SAST, DAST, threat modeling, CI/CD), each with
 > theory + objectives + a flag box, and a live terminal beside it. Text-only
 > version: `cd rooms && python3 rooms.py`.
