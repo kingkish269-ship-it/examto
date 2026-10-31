@@ -1,0 +1,54 @@
+{
+  "order": 9,
+  "id": "misconfig",
+  "title": "Security Misconfiguration",
+  "track": "OWASP Top 10",
+  "difficulty": "core",
+  "estimate": "12 min",
+  "brief": "**Ticket:** the app ships without security headers. Identify the header that stops MIME sniffing.",
+  "theory": "## Security misconfiguration (OWASP A05)\nSend security headers on every response: `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Content-Security-Policy`, `Referrer-Policy`. Return generic errors; never run debug mode on a reachable server.",
+  "worked_example": "```\n$ curl -s -D - https://good.example/ -o /dev/null | grep -i content-security\ncontent-security-policy: default-src 'self'\n```",
+  "knowledge_check": [
+    {
+      "q": "Error pages shown to users should be ___",
+      "type": "choice",
+      "choices": [
+        "detailed stack traces",
+        "generic",
+        "debug mode",
+        "verbose"
+      ],
+      "answer_sha256": "3a2e8954befdbd6e7eac2f10d4301a2923cd65a5f38bf80914019b55a03f78c4"
+    },
+    {
+      "q": "Which header limits what scripts can load/run?",
+      "type": "choice",
+      "choices": [
+        "Content-Security-Policy",
+        "Accept",
+        "Host",
+        "Cookie"
+      ],
+      "answer_sha256": "2dc4fe8df48a18feb58d6e473331454e6d32b81525482be2a8bde96d29c88465"
+    }
+  ],
+  "investigation": {
+    "intro": "Compare the headers the lab app sends in vulnerable vs secure mode.",
+    "steps": [
+      "```bash\ncd /workspaces/examto/appsec-lab\npython3 -m venv .venv 2>/dev/null; . .venv/bin/activate 2>/dev/null; pip install -q -r requirements.txt\npython3 run_server.py               # leave this running\n```",
+      "In a second terminal, look at the headers (vulnerable \u2014 note what's missing):\n```bash\ncurl -s -D - http://127.0.0.1:5000/health -o /dev/null\n```",
+      "Restart the app with `LAB_SECURE=1 python3 run_server.py` and look again \u2014 the security headers now appear. The one with value `nosniff` is your answer."
+    ],
+    "hints": [
+      "It starts with X-Content-...",
+      "Its value is 'nosniff'.",
+      "Submit the header name, lowercase is fine."
+    ]
+  },
+  "capture": {
+    "task": "**Name the control.** Which response header (its name) carries the value `nosniff`?",
+    "hint": "X-Content-...",
+    "placeholder": "the header name",
+    "answer_sha256": "198fc233cd78d14b7abb406264a93f90ade842e352f27839a707a90578e3dd26"
+  }
+}

