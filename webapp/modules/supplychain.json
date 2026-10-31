@@ -4,9 +4,9 @@
   "title": "Supply Chain Security",
   "track": "Cloud-native",
   "difficulty": "advanced",
-  "estimate": "15 min",
+  "estimate": "25 min",
   "brief": "**Ticket:** prove what's in our build and that it's ours. Name the component inventory.",
-  "theory": "## Supply chain\nKnow and trust the build: **SBOM** (inventory, via Syft), **signing** (Cosign), **provenance/SLSA**. Pin deps, restrict CI permissions, protect branches.",
+  "theory": "## What it is\nSupply Chain Security protects everything your software depends on and everything\nthat builds it - open-source packages, base images, build tools, and the pipeline.\nThe foundation is an **SBOM** (Software Bill of Materials): a machine-readable list\nof every component in your software.\n\n## How it works\nAttackers compromise a dependency or build step so your trusted release ships\ntheir code: a malicious package version, a typosquatted name, or\n**dependency confusion** (publishing a public package that shadows an internal\none). An SBOM plus provenance (signed attestations of how a build was produced)\nlets you detect and respond.\n\n## In the real world\n**SolarWinds (2020)** shipped a backdoor to thousands of organizations through a\ncompromised build. The **event-stream** npm incident (2018) and Alex Birsan's\ndependency-confusion research (2021) are canonical examples. The US executive\norder on cybersecurity now pushes SBOMs industry-wide.\n\n## How to prevent it\nGenerate and track an SBOM (Syft/CycloneDX), scan it (Grype/Trivy), pin and verify\ndependencies, sign artifacts (Cosign) and generate provenance (SLSA), and lock\ndown who/what can publish to your pipeline.",
   "worked_example": "```\n$ syft dir:. -o cyclonedx-json > sbom.json\n$ cosign sign <image>\n```",
   "knowledge_check": [
     {
@@ -33,16 +33,17 @@
     }
   ],
   "investigation": {
-    "intro": "Analyze an SBOM and read the supply-chain exercises.",
+    "intro": "Analyse an SBOM for risky components, then read the real-tool exercises for SBOM/sign/provenance.",
     "steps": [
-      "```bash\ncd /workspaces/examto/supply-chain-lab\npython3 scan.py\ncat exercises/01_generate_sbom.md\n```",
-      "The scan reads a CycloneDX SBOM and flags risky components.",
-      "The inventory format is the answer below."
+      "Analyse a CycloneDX SBOM for vulnerable and unpinned components:\n```bash\ncd /workspaces/examto/supply-chain-lab\npython3 scan.py\n```",
+      "Read the real-tool exercises that walk through generating an SBOM, scanning + signing it, and SLSA provenance:\n```bash\ncat exercises/01_generate_sbom.md\ncat exercises/02_scan_and_sign.md\ncat exercises/03_provenance_slsa.md\n```",
+      "Connect the dots: the SBOM is the inventory that makes a Log4Shell-style 'are we affected?' question answerable in minutes.",
+      "Capture: a machine-readable list of all components in your software is an ___ (4 letters)."
     ],
     "hints": [
-      "Software Bill of Materials.",
-      "4-letter abbreviation.",
-      "SBOM."
+      "It stands for Software Bill of Materials.",
+      "Four letters, an acronym.",
+      "The answer is SBOM."
     ]
   },
   "capture": {

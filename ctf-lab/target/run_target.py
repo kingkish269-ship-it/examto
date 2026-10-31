@@ -5,7 +5,15 @@
 Intentionally vulnerable. Bind to localhost only; never deploy.
 """
 
-from target.app import create_target_app
+import os
+import sys
+
+# Make `python3 target/run_target.py` work from the ctf-lab root: ensure the
+# repo-relative parent (which contains the `target` package) is importable,
+# not just this script's own directory.
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from target.app import create_target_app  # noqa: E402
 
 BANNER = r"""
 ============================================================

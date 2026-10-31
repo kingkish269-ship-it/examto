@@ -4,9 +4,9 @@
   "title": "Command Injection",
   "track": "OWASP Top 10",
   "difficulty": "core",
-  "estimate": "20 min",
+  "estimate": "25 min",
   "brief": "**Ticket:** a 'ping host' diagnostic feature runs a shell command with your input. Break out of it and read a secret from the server's environment.",
-  "theory": "## Command Injection (OWASP A03)\nThe server builds a shell command with your input and runs it. Metacharacters like `;` `|` `&&` let you add your own command \u2014 often full server takeover.\n\n**Fix:** no shell \u2014 pass an argument list (`shell=False`) and validate input.",
+  "theory": "## What it is\nCommand Injection is getting the server's operating system to run your commands.\nIt happens when user input is placed into a shell command string.\n\n## How it works\nCode like `os.system(\"ping \" + host)` with `host=localhost; echo INJECTED` runs\ntwo commands: the ping *and* your `echo`. Shell metacharacters - `;`, `|`, `&&`,\nbackticks, `$()` - chain or substitute commands. The usual root cause in Python\nis `subprocess.run(cmd, shell=True)` built from user input.\n\n## In the real world\nCommand injection is the engine behind countless router, camera, and IoT\nremote-code-execution CVEs, and behind many \"RCE\" bug bounties on web admin\npanels that shell out to system tools. One injected `;` can turn a diagnostics\npage into a full server takeover.\n\n## How to prevent it\nDo not call a shell. Pass arguments as a **list without `shell=True`**\n(`subprocess.run([\"ping\", \"-c1\", host])`) so the OS treats `host` as a single\nargument, never as syntax. Validate/allow-list the input as a second layer.",
   "worked_example": "```\n$ curl \"https://x/diag?host=localhost;id\"\nuid=33(www-data) gid=33 ...   # a second command ran\n```",
   "knowledge_check": [
     {
@@ -27,16 +27,18 @@
     }
   ],
   "investigation": {
-    "intro": "Inject a second command to print the CTF_FLAG environment variable.",
+    "intro": "Turn a harmless diagnostics endpoint into arbitrary command execution, then close it with the fix.",
     "steps": [
-      "```bash\ncd /workspaces/examto/ctf-lab\npython3 -m venv .venv 2>/dev/null; . .venv/bin/activate 2>/dev/null; pip install -q -r requirements.txt\npython3 target/run_target.py        # leave this running\n```",
-      "In a second terminal, chain a command (%3B is an encoded ';'):\n```bash\ncurl -s \"http://127.0.0.1:5000/diag?host=x%3B%20printenv%20CTF_FLAG\"\n```",
-      "The flag is printed after the normal diagnostic output."
+      "**Start the lab app** (leave it running; open a *second* terminal tab for the attack):\n```bash\ncd /workspaces/examto/appsec-lab\npython3 -m venv .venv 2>/dev/null; . .venv/bin/activate; pip install -q -r requirements.txt\npython3 run_server.py\n```",
+      "In a second terminal, run a normal request, then inject a second command (`%3B` is a URL-encoded `;`):\n```bash\ncurl -s \"http://127.0.0.1:5000/diag?host=localhost\"\ncurl -s \"http://127.0.0.1:5000/diag?host=localhost%3B%20echo%20INJECTED\"\n```\nSeeing `INJECTED` in the output means your command ran on the server.",
+      "**Apply the fix and re-test.** Stop the server (Ctrl+C) and restart it in secure mode, then run the SAME attack again:\n```bash\nLAB_SECURE=1 python3 run_server.py\n```\nRe-run the injected request: the fix passes args as a list (no shell), so `; echo INJECTED` is treated as part of the hostname and nothing extra runs.",
+      "Capture the flag on the CTF target, which shells out the same way:\n```bash\ncd /workspaces/examto/ctf-lab\npython3 -m venv .venv 2>/dev/null; . .venv/bin/activate; pip install -q -r requirements.txt\npython3 target/run_target.py        # leave running\n```",
+      "In a second terminal, the `/diag` endpoint runs your input in a shell with the flag in the `CTF_FLAG` env var. Inject a second command to print it (single-quote the data so YOUR shell doesn't expand it first):\n```bash\ncurl -s -G http://127.0.0.1:5000/diag --data-urlencode 'host=localhost; echo $CTF_FLAG'\n```\nThe `FLAG{...}` appears in the `output` field - that is your capture answer."
     ],
     "hints": [
       "A semicolon ends one command and starts another.",
-      "`printenv CTF_FLAG` prints the secret.",
-      "URL-encode the semicolon and spaces (%3B, %20)."
+      "URL-encode it as %3B inside a query string.",
+      "The capture answer describes what the semicolon did."
     ]
   },
   "capture": {

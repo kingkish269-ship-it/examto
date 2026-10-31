@@ -4,9 +4,9 @@
   "title": "CI/CD Pipeline Security",
   "track": "DevSecOps",
   "difficulty": "core",
-  "estimate": "15 min",
+  "estimate": "20 min",
   "brief": "**Ticket:** the pipeline must block an insecure release. Run the gate and read its exit code.",
-  "theory": "## CI/CD security\nSecurity runs in the pipeline: secret scan -> SAST -> SCA/container scan -> a **gate** that applies policy and returns an exit code (0 continue, non-zero block). Make gates fair: start at HIGH, allowlist accepted risks.",
+  "theory": "## What it is\nCI/CD Pipeline Security means securing the build-and-deploy pipeline itself, and\nusing it as the place where security checks are enforced. A **security gate**\nfails the build when scanners report findings above a threshold.\n\n## How it works\nThe pipeline runs SAST, SCA, secret scanning, and IaC scanning, collects their\noutput, and a gate decides pass/fail against a policy (for example \"fail on any\nHIGH or above\"). A non-zero exit code stops the release. The pipeline must also\nprotect its own secrets and runners from tampering.\n\n## In the real world\nAttackers increasingly target pipelines: **SolarWinds (2020)** had malicious code\ninjected into the build process, and **Codecov (2021)** leaked secrets via a\ncompromised CI script. A working security gate is a headline DevSecOps skill.\n\n## How to prevent it\nRun the scanners in CI, enforce a gate that blocks on policy violations, least-\nprivilege the pipeline's credentials, pin and verify your build tools, and keep an\nallow-list process for accepted/triaged findings.",
   "worked_example": "```\n$ run_gate --fail-on HIGH ; echo $?\nDevSecOps gate: FAIL\n1\n```",
   "knowledge_check": [
     {
@@ -33,16 +33,17 @@
     }
   ],
   "investigation": {
-    "intro": "Run the gate on findings that include a CRITICAL and a leaked secret.",
+    "intro": "Run a real security gate over scanner output and watch it block, then pass.",
     "steps": [
-      "```bash\ncd /workspaces/examto/devsecops-lab\npython3 -m gate.run_gate --semgrep samples/semgrep_sample.json --trivy samples/trivy_sample.json --gitleaks samples/gitleaks_sample.json --fail-on HIGH\necho \"exit code: $?\"\n```",
-      "It prints FAIL and an exit code.",
-      "That exit code is how CI knows to stop - it's your answer."
+      "Run the gate over sample SAST/SCA/secret findings with a 'fail on HIGH' policy - it should BLOCK and exit non-zero:\n```bash\ncd /workspaces/examto/devsecops-lab\npython3 -m gate.run_gate \\\n  --semgrep samples/semgrep_sample.json \\\n  --trivy samples/trivy_sample.json \\\n  --gitleaks samples/gitleaks_sample.json \\\n  --fail-on HIGH\necho \"exit code: $?\"\n```",
+      "Now allow-list the one CVE and watch the policy decision change:\n```bash\npython3 -m gate.run_gate --trivy samples/trivy_sample.json --fail-on HIGH --allow CVE-2023-0001\necho \"exit code: $?\"\n```",
+      "Note the relationship: exit code 0 lets the release proceed, non-zero blocks it. That exit code is what a CI step checks.",
+      "Capture: what exit code does the gate return when it blocks the release? (a single non-zero digit)."
     ],
     "hints": [
-      "Zero means continue; what means stop?",
-      "A single digit.",
-      "1."
+      "A passing build exits 0; a blocked build exits non-zero.",
+      "It is a single digit.",
+      "The answer is 1."
     ]
   },
   "capture": {

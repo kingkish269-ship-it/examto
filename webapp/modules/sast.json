@@ -4,9 +4,9 @@
   "title": "SAST",
   "track": "DevSecOps",
   "difficulty": "core",
-  "estimate": "15 min",
+  "estimate": "20 min",
   "brief": "**Ticket:** add static scanning to the pipeline. Run a scanner and name what it finds.",
-  "theory": "## SAST\nReads source without running it, flags risky patterns (source -> sink). Tools: **Bandit** (Python), **Semgrep** (multi-language). Fast, runs in CI, has false positives.",
+  "theory": "## What it is\nSAST (Static Application Security Testing) analyses source code **without running\nit**, flagging risky patterns and source-to-sink data flows. It is the automated\nversion of secure code review and runs early in the pipeline.\n\n## How it works\nThe tool parses your code into an AST/graph and matches rules: Bandit for Python\n(flags `shell=True`, `pickle`, `md5`, raw SQL), Semgrep for multi-language\npattern rules. It is fast and shift-left, but produces **false positives**, so\nfindings need triage.\n\n## In the real world\nSAST in CI is table stakes for modern DevSecOps: every pull request gets scanned,\nhigh-severity findings block the merge. Knowing how to run Bandit/Semgrep and\ntriage their output is a direct, named requirement in AppSec/DevSecOps job posts.\n\n## How to prevent it\n(SAST is a detection control.) Wire it into CI, fail the build on high-severity\nfindings, tune rules to cut false positives, and track findings to resolution so\nthe same class cannot reappear.",
   "worked_example": "```\n$ bandit -r app/\n>> Issue: [B602] subprocess with shell=True ... Severity: High\n```",
   "knowledge_check": [
     {
@@ -33,16 +33,17 @@
     }
   ],
   "investigation": {
-    "intro": "Run the mini scanner (and the real Bandit via tools-lab) on the vulnerable code.",
+    "intro": "Run a mini scanner to learn the signal, then the real Bandit and Semgrep on the vulnerable app.",
     "steps": [
-      "```bash\ncd /workspaces/examto/rooms/sast\npython3 scan.py vulnerable_example.py\n```",
-      "It reports the vulnerability class on the shell=True line.",
-      "Real tool: `tools-lab/` installs Bandit -> `bandit -r appsec-lab/vulnerable_app`."
+      "Run the room's mini scanner to see it name the vulnerability class on the `shell=True` line:\n```bash\ncd /workspaces/examto/rooms/sast\npython3 scan.py vulnerable_example.py\n```",
+      "Now the real tool. Install and run Bandit against the vulnerable app:\n```bash\npip install -q bandit\nbandit -r /workspaces/examto/appsec-lab/vulnerable_app\n```\nBandit flags pickle, subprocess `shell=True`, md5, raw SQL, and urlopen.",
+      "Run Semgrep with the repo's ruleset for a second engine's view:\n```bash\ncd /workspaces/examto\nsemgrep scan --config appsec-lab/tools/semgrep-rules.yml appsec-lab/vulnerable_app\n```\n(If Semgrep complains about settings, `export SEMGREP_SETTINGS_FILE=$PWD/.semgrep.yml` first.)",
+      "Capture: the vulnerability class the scanner reports on the `shell=True` line (two words)."
     ],
     "hints": [
-      "The scanner prints the class in CAPS.",
-      "It's about a shell command.",
-      "command injection."
+      "SAST reads source without running it.",
+      "Bandit is the free Python SAST tool.",
+      "The shell=True finding is command injection."
     ]
   },
   "capture": {

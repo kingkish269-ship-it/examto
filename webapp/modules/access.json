@@ -4,10 +4,10 @@
   "title": "Broken Access Control",
   "track": "OWASP Top 10",
   "difficulty": "core",
-  "estimate": "20 min",
+  "estimate": "25 min",
   "brief": "**Security ticket:** a normal user reports they can see another user's account by changing a number in the URL. Confirm it, capture what the admin account hides.",
-  "theory": "## IDOR (OWASP A01)\nThe app returns an object by **id** with no ownership check. Change `/account/1` to `/account/2` and you read someone else's data. In APIs this is **BOLA**, the #1 API risk.\n\n**Fix:** a server-side ownership check \u2014 the caller must own the object (or be admin). Hiding the id in the UI is not a control; the attacker types the request by hand.",
-  "worked_example": "On a different app, a junior analyst found an IDOR like this:\n```\n$ curl -s https://shop.example/api/order/1001 -H \"Session: mytoken\"\n{\"id\":1001,\"owner\":\"someone_else\",\"total\":940}   # not mine!\n```\nThey changed only the id and read another customer's order. Same technique, different machine \u2014 the answer does not carry over.",
+  "theory": "## What it is\nBroken Access Control is failing to enforce what a logged-in user is *allowed*\nto do. The classic case is **IDOR** (Insecure Direct Object Reference): the app\ntrusts an id in the request and hands back that object without checking it\nbelongs to you.\n\n## How it works\nYou authenticate as yourself, then change an id in the URL or body\n(`/api/account/3` instead of your own `/api/account/2`). If the server returns\nrecord 3 without asking \"does this caller own record 3?\", access control is\nbroken. The same flaw covers forced browsing to admin pages and tampering with a\n`role=user` field to `role=admin`.\n\n## In the real world\nThis is **OWASP A01 - the #1 web risk**. In 2018 a USPS API exposed account\ndetails for roughly 60 million users because any logged-in user could query any\naccount. Nearly every \"I changed the id and saw someone else's data\" bug bounty\nreport is this.\n\n## How to prevent it\nCheck authorization on the **server, for every request, against the logged-in\nuser** - not just authentication. Deny by default. Never rely on hiding a button\nor a URL; the attacker sends the request directly.",
+  "worked_example": "On a different app, a junior analyst found an IDOR like this:\n```\n$ curl -s https://shop.example/api/order/1001 -H \"Session: mytoken\"\n{\"id\":1001,\"owner\":\"someone_else\",\"total\":940}   # not mine!\n```\nThey changed only the id and read another customer's order. Same technique, different machine — the answer does not carry over.",
   "knowledge_check": [
     {
       "q": "IDOR stands for Insecure Direct Object ___",
@@ -38,16 +38,19 @@
     }
   ],
   "investigation": {
-    "intro": "Bring up the target and read an account that is not yours.",
+    "intro": "Log in as a normal user, then read the admin's private account by changing only the id - the definition of IDOR.",
     "steps": [
-      "```bash\ncd /workspaces/examto/ctf-lab\npython3 -m venv .venv 2>/dev/null; . .venv/bin/activate 2>/dev/null; pip install -q -r requirements.txt\npython3 target/run_target.py        # leave this running\n```",
-      "In a second terminal, read the admin account (id 3) even though you are not admin:\n```bash\ncurl -s http://127.0.0.1:5000/api/account/3\n```",
-      "The response has a `secret_note` field \u2014 that is your flag."
+      "**Start the lab app** (leave it running; open a *second* terminal tab for the attack):\n```bash\ncd /workspaces/examto/appsec-lab\npython3 -m venv .venv 2>/dev/null; . .venv/bin/activate; pip install -q -r requirements.txt\npython3 run_server.py\n```",
+      "In a second terminal, log in as the normal user `alice` and grab her session token:\n```bash\ncd /workspaces/examto/appsec-lab\nTOKEN=$(curl -s -X POST http://127.0.0.1:5000/login -d username=alice -d password=password123 \\\n  | python3 -c \"import sys,json;print(json.load(sys.stdin)['session'])\")\necho \"$TOKEN\"\n```",
+      "Now read the ADMIN's account (id 3) while authenticated as alice - the server never checks ownership:\n```bash\ncurl -s http://127.0.0.1:5000/api/account/3 -H \"X-Session: $TOKEN\"\n```\nYou just read data that is not yours. That is IDOR.",
+      "**Apply the fix and re-test.** Stop the server (Ctrl+C) and restart it in secure mode, then run the SAME attack again:\n```bash\nLAB_SECURE=1 python3 run_server.py\n```\nRe-run the `curl .../api/account/3` line: in secure mode the server checks that the token owner matches the requested id and refuses.",
+      "Now capture the flag on the CTF target, which has the same IDOR with no ownership check. Stop the appsec app, then:\n```bash\ncd /workspaces/examto/ctf-lab\npython3 -m venv .venv 2>/dev/null; . .venv/bin/activate; pip install -q -r requirements.txt\npython3 target/run_target.py        # leave running\n```",
+      "In a second terminal, read the admin account (id 3) - no login needed here - and take the `FLAG{...}` from its `secret_note`:\n```bash\ncurl -s http://127.0.0.1:5000/api/account/3\n```\nThe value of `secret_note` is your capture answer."
     ],
     "hints": [
-      "Accounts are numbered; try ids other than your own.",
-      "The admin is id 3.",
-      "The flag is in the secret_note field of the JSON."
+      "On the CTF target, GET /api/account/3 needs no authentication at all.",
+      "The flag is in the secret_note field of the admin's account.",
+      "Submit the full FLAG{...} string you read."
     ]
   },
   "capture": {

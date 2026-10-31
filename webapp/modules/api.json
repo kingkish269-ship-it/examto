@@ -4,9 +4,9 @@
   "title": "API Security",
   "track": "Modern",
   "difficulty": "core",
-  "estimate": "15 min",
+  "estimate": "25 min",
   "brief": "**Ticket:** the mobile app talks to a JSON API. Confirm it leaks another user's object and name the flaw class.",
-  "theory": "## OWASP API Top 10\nThe #1 risk is **BOLA** (Broken Object Level Authorization) - the API's IDOR. Others: broken auth, broken function-level authz, **excessive data exposure** (returning more fields than needed), mass assignment, no rate limiting.\n\n**Fix:** authorize every object and function on the server; return only needed fields; rate-limit.",
+  "theory": "## What it is\nAPI Security covers the flaws specific to machine-to-machine HTTP/JSON APIs. The\n#1 issue is **BOLA** (Broken Object Level Authorization) - the API version of\nIDOR: an endpoint returns an object by id without checking the caller owns it.\n\n## How it works\n`GET /api/account/{id}` with a valid token but someone else's id returns their\ndata when the server only checks *authentication* (are you logged in?) and not\n*authorization* (may you see THIS object?). Related issues: BFLA (calling\nadmin-only functions), excessive data exposure, and missing rate limits.\n\n## In the real world\nThis is **OWASP API Security Top 10 #1**. Peloton's API (2021) let anyone pull\nother users' private profile data, and the USPS API (2018) exposed ~60M accounts -\nboth BOLA. APIs now carry most app traffic, so this is squarely where AppSec\nhiring is going.\n\n## How to prevent it\nEnforce **per-object authorization on every request** on the server, tie objects\nto the authenticated principal, return only the fields the caller needs, and add\nrate limiting and schema validation.",
   "worked_example": "```\nGET /api/order/1001   -> {\"id\":1001,\"owner\":\"someone_else\",...}   # BOLA\n```",
   "knowledge_check": [
     {
@@ -33,16 +33,17 @@
     }
   ],
   "investigation": {
-    "intro": "Hit an API object that isn't yours on the CTF target.",
+    "intro": "Exploit BOLA: read another user's object by id, the single most common API flaw.",
     "steps": [
-      "```bash\ncd /workspaces/examto/ctf-lab\npython3 -m venv .venv 2>/dev/null; . .venv/bin/activate 2>/dev/null; pip install -q -r requirements.txt\npython3 target/run_target.py\n```",
-      "In a second terminal:\n```bash\ncurl -s http://127.0.0.1:5000/api/account/3\n```",
-      "You read another user's object and it returned every field - that's BOLA + excessive data exposure."
+      "**Start the lab app** (leave it running; open a *second* terminal tab for the attack):\n```bash\ncd /workspaces/examto/appsec-lab\npython3 -m venv .venv 2>/dev/null; . .venv/bin/activate; pip install -q -r requirements.txt\npython3 run_server.py\n```",
+      "In a second terminal, log in as `alice` and read a different user's object by id - authentication passes but object-level authorization does not exist:\n```bash\ncd /workspaces/examto/appsec-lab\nTOKEN=$(curl -s -X POST http://127.0.0.1:5000/login -d username=alice -d password=password123 \\\n  | python3 -c \"import sys,json;print(json.load(sys.stdin)['session'])\")\ncurl -s http://127.0.0.1:5000/api/account/3 -H \"X-Session: $TOKEN\"\n```",
+      "**Apply the fix and re-test.** Stop the server (Ctrl+C) and restart it in secure mode, then run the SAME attack again:\n```bash\nLAB_SECURE=1 python3 run_server.py\n```\nRe-run it: secure mode checks the object belongs to the token owner and returns 403.",
+      "Takeaway and capture: name the 4-letter OWASP API term for returning an object by id with no ownership check."
     ],
     "hints": [
-      "IDOR in an API has a specific OWASP name.",
-      "Four letters, starts with B.",
-      "BOLA."
+      "It is the API name for IDOR.",
+      "Authentication alone is not authorization.",
+      "Four letters, starts with B."
     ]
   },
   "capture": {

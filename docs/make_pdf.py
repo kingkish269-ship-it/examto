@@ -382,14 +382,14 @@ CONTENT = [
      ["Section", "What you do"],
      [
         ["1. Brief", "A two-line 'why this matters'. Sets the scene."],
-        ["2. Theory", "The concept explained plainly, with the vulnerable pattern "
-                      "and the fix. This is the part you study."],
+        ["2. Theory", "Four parts: What it is, How it works, In the real world "
+                      "(real breaches), and How to prevent it. This is the part you study."],
         ["3. Worked example", "A fully worked command/response so you see exactly "
                               "what 'good' looks like before you try."],
         ["4. Knowledge check", "Multiple-choice / short answers. You must get them "
                                "right to mark the section done. Instant grading."],
-        ["5. Investigation", "Hands-on steps in the terminal: start the lab app, "
-                             "send requests, read output. Hints provided."],
+        ["5. Investigation", "A complete hands-on lab in the terminal: exploit the "
+                             "flaw, apply the fix, then re-test to confirm it is closed. Hints provided."],
         ["6. Capture", "Enter the flag or the one-word answer you derived. Graded "
                        "against a hash - the answer is never stored in plaintext."],
      ],
