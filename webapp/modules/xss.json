@@ -4,9 +4,9 @@
   "title": "Cross-Site Scripting",
   "track": "OWASP Top 10",
   "difficulty": "core",
-  "estimate": "20 min",
+  "estimate": "25 min",
   "brief": "**Ticket:** a greeting page reflects your name straight into the HTML. A simulated admin bot visits pages. Land a script and steal what the bot leaks.",
-  "theory": "## Reflected XSS (OWASP A03)\nThe app puts your input into HTML without encoding, so `<script>` runs in the victim's browser \u2014 stealing cookies, acting as them.\n\n**Fix:** contextual output encoding (`<` becomes `&lt;`) plus a Content-Security-Policy.",
+  "theory": "## What it is\nCross-Site Scripting (XSS) is getting your JavaScript to run in another user's\nbrowser, in the context of a trusted site. The app reflects or stores your input\ninto a page without encoding it.\n\n## How it works\nSend `name=<script>alert(1)</script>`; if the server drops it straight into the\nHTML, the victim's browser executes it. **Reflected** XSS bounces off a single\nrequest (a crafted link). **Stored** XSS is saved (a comment, a profile) and\nfires for everyone who views it. Payloads steal session cookies, perform actions\nas the victim, or rewrite the page.\n\n## In the real world\nThe 2005 **Samy worm** used stored XSS to add over a million MySpace friends in a\nday. The 2014 **TweetDeck** XSS made tweets auto-retweet themselves across the\nplatform. XSS remains one of the most reported bug-bounty classes.\n\n## How to prevent it\n**Context-aware output encoding** - HTML-encode data when writing it into HTML so\n`<script>` becomes harmless text. Add a **Content-Security-Policy** header as a\nstrong second layer, and set cookies `HttpOnly` so script cannot read them.",
   "worked_example": "```\n$ curl \"https://x/greet?name=<script>steal()</script>\"\n<h1>Hello <script>steal()</script></h1>   # runs in the victim's browser\n```",
   "knowledge_check": [
     {
@@ -33,16 +33,18 @@
     }
   ],
   "investigation": {
-    "intro": "Send a script payload; the admin bot 'runs' it and leaks its cookie in a response header.",
+    "intro": "Reflect a script payload off a live app, then watch output encoding neutralise it.",
     "steps": [
-      "```bash\ncd /workspaces/examto/ctf-lab\npython3 -m venv .venv 2>/dev/null; . .venv/bin/activate 2>/dev/null; pip install -q -r requirements.txt\npython3 target/run_target.py        # leave this running\n```",
-      "In a second terminal, send a script payload and read the response headers:\n```bash\ncurl -s -D - \"http://127.0.0.1:5000/greet?name=<script>x</script>\" -o /dev/null\n```",
-      "Look for the `X-Admin-Cookie` header \u2014 its value is the flag."
+      "**Start the lab app** (leave it running; open a *second* terminal tab for the attack):\n```bash\ncd /workspaces/examto/appsec-lab\npython3 -m venv .venv 2>/dev/null; . .venv/bin/activate; pip install -q -r requirements.txt\npython3 run_server.py\n```",
+      "In a second terminal, send a script payload into the greeting and look at the raw HTML that comes back - your `<script>` is embedded verbatim:\n```bash\ncurl -s \"http://127.0.0.1:5000/greet?name=<script>alert(1)</script>\"\n```\nIn a real browser that script would execute as the victim.",
+      "**Apply the fix and re-test.** Stop the server (Ctrl+C) and restart it in secure mode, then run the SAME attack again:\n```bash\nLAB_SECURE=1 python3 run_server.py\n```\nRe-run it: the secure app HTML-encodes the output, so you see `&lt;script&gt;` - inert text, not code.",
+      "Capture the flag on the CTF target, which has an XSS challenge where a simulated admin bot 'runs' your payload:\n```bash\ncd /workspaces/examto/ctf-lab\npython3 -m venv .venv 2>/dev/null; . .venv/bin/activate; pip install -q -r requirements.txt\npython3 target/run_target.py        # leave running\n```",
+      "In a second terminal, send a `<script>` payload to `/greet`. The admin bot executes it and leaks its cookie in the `X-Admin-Cookie` response header:\n```bash\ncurl -s -G -D - http://127.0.0.1:5000/greet --data-urlencode 'name=<script>alert(1)</script>' -o /dev/null | grep -i x-admin-cookie\n```\nThe header value is the `FLAG{...}` - your capture answer."
     ],
     "hints": [
-      "A <script> tag or onerror= triggers the bot.",
-      "Read the response headers, not the body (-D -).",
-      "The flag is in the X-Admin-Cookie header."
+      "The payload is a <script> tag in the 'name' parameter.",
+      "Secure mode encodes < and > so the browser won't run it.",
+      "The capture is the 3-letter name of this flaw."
     ]
   },
   "capture": {

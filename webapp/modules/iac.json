@@ -4,9 +4,9 @@
   "title": "IaC Security (Terraform)",
   "track": "Cloud-native",
   "difficulty": "core",
-  "estimate": "15 min",
+  "estimate": "20 min",
   "brief": "**Ticket:** scan the Terraform before apply. Find the rule that flags a public database.",
-  "theory": "## IaC security\nScan Terraform/CloudFormation for misconfig before deploy: public S3, open security groups, public/unencrypted DBs, IAM wildcards. Tools: Checkov, tfsec. Your cloud knowledge, shifted left.",
+  "theory": "## What it is\nIaC (Infrastructure as Code) Security scans your cloud definitions - Terraform,\nCloudFormation, Kubernetes manifests - for insecure settings **before** they are\ndeployed. You catch a public database in the plan, not in production.\n\n## How it works\nA scanner parses the IaC and matches security rules: public S3 ACLs, publicly\naccessible RDS, security groups open to `0.0.0.0/0`, unencrypted storage. Each\nfinding has a rule id and severity, and the scan can fail the pipeline.\n\n## In the real world\nCountless cloud leaks trace back to a single misconfigured resource in IaC -\na bucket set public, a database exposed. Tools like **Checkov**, tfsec, and\nTerrascan run in CI so the misconfig never reaches the account.\n\n## How to prevent it\nScan IaC in CI and fail on high/critical findings, use secure modules/defaults,\nrequire encryption and private networking, and review every change to\nnetwork/permission resources.",
   "worked_example": "```\n$ checkov -d terraform/\nFAILED CKV_AWS_24  security group allows 0.0.0.0/0 to port 22\n```",
   "knowledge_check": [
     {
@@ -33,16 +33,17 @@
     }
   ],
   "investigation": {
-    "intro": "Scan the insecure Terraform plan and read the rule ids.",
+    "intro": "Scan an insecure Terraform plan, see it fail, then prove the hardened plan passes.",
     "steps": [
-      "```bash\ncd /workspaces/examto/iac-security-lab\npython3 scan.py terraform/sample_plan_insecure.json\n```",
-      "Read the findings; one rule flags the publicly accessible RDS instance.",
-      "Real tool: `tools-lab/` -> `checkov -d iac-security-lab/terraform/insecure`."
+      "Scan the insecure plan - it reports public S3, a publicly accessible RDS, an open security group, and unencrypted storage, and exits non-zero:\n```bash\ncd /workspaces/examto/iac-security-lab\npython3 scan.py terraform/sample_plan_insecure.json\necho \"exit code: $?\"\n```",
+      "Compare the insecure vs secure Terraform so you can see exactly which attributes matter:\n```bash\ncat terraform/insecure/main.tf\ncat terraform/secure/main.tf\n```",
+      "Prove the hardened plan passes with exit code 0:\n```bash\npython3 scan.py terraform/sample_plan_secure.json\necho \"exit code: $?\"\n```",
+      "Optional real tool: `checkov -d /workspaces/examto/iac-security-lab/terraform/insecure --compact`. Capture: which rule id flags the publicly accessible database? (rds-___)."
     ],
     "hints": [
-      "The rule id starts with rds-.",
-      "Public database.",
-      "rds-public."
+      "Look at the rule ids the insecure scan prints.",
+      "It concerns the RDS database being reachable from the internet.",
+      "The id is rds-public."
     ]
   },
   "capture": {

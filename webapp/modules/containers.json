@@ -4,9 +4,9 @@
   "title": "Container Security",
   "track": "Cloud-native",
   "difficulty": "core",
-  "estimate": "12 min",
+  "estimate": "20 min",
   "brief": "**Ticket:** harden a Docker image. Find what unsafe user the insecure image runs as.",
-  "theory": "## Container security\nPin base image by digest (not latest), run **non-root**, minimal base, read-only fs, drop capabilities, scan with Trivy. A container running as root is a key finding.",
+  "theory": "## What it is\nContainer Security is hardening your Docker images and runtime so a compromised\napp cannot easily escalate. The most basic rule: a container should **not run as\nroot**.\n\n## How it works\nA Dockerfile that runs as root, uses an untagged `latest` base, pipes `curl | sh`,\nor bakes in secrets gives an attacker a strong foothold if the app is breached.\nLinting the Dockerfile and scanning the image for CVEs and bad practices catches\nthese before they ship.\n\n## In the real world\nExposed Docker daemons and root containers are routinely abused for cryptomining\nand lateral movement. Image hygiene (minimal base, non-root user, pinned tags, no\nembedded secrets) is a standard container-security checklist item in every\ncloud-native shop.\n\n## How to prevent it\nRun as a non-root `USER`, pin base-image tags/digests, use minimal/distroless\nbases, never bake in secrets, drop Linux capabilities, and scan images in CI.",
   "worked_example": "```\nFROM ubuntu:latest     # unpinned\n# no USER -> runs as root\n```",
   "knowledge_check": [
     {
@@ -33,16 +33,17 @@
     }
   ],
   "investigation": {
-    "intro": "Lint the insecure Dockerfile.",
+    "intro": "Lint an insecure Dockerfile, compare it to the hardened one, and name the worst setting.",
     "steps": [
-      "```bash\ncd /workspaces/examto/container-k8s-lab\npython3 -c \"from validator.dockerfile_lint import lint;[print(f['rule']) for f in lint(open('manifests/insecure/Dockerfile').read())]\"\n```",
-      "It flags 'runs-as-root' among others.",
-      "Compare manifests/secure/Dockerfile to see the non-root fix."
+      "Compare the insecure and hardened Dockerfiles:\n```bash\ncd /workspaces/examto/container-k8s-lab\ncat manifests/insecure/Dockerfile\ncat manifests/secure/Dockerfile\n```",
+      "Run the lab's Dockerfile linter on the insecure one and read the findings (runs-as-root, untagged base, pipe-to-shell):\n```bash\npython3 - <<'PY'\nfrom validator.dockerfile_lint import lint\nfor f in lint(open(\"manifests/insecure/Dockerfile\").read()):\n    print(f[\"severity\"], f[\"rule\"], \"- line\", f[\"line\"])\nPY\n```",
+      "Map each finding to its fix in the secure Dockerfile (a `USER` line, a pinned tag, installing without piping to a shell).",
+      "Capture: a container should NOT run as which user? (one word - the superuser)."
     ],
     "hints": [
-      "The finding is 'runs-as-root'.",
-      "Which user is unsafe?",
-      "root."
+      "Check the 'runs-as-root' finding.",
+      "It is the Unix superuser.",
+      "One word: root."
     ]
   },
   "capture": {

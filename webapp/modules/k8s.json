@@ -4,9 +4,9 @@
   "title": "Kubernetes Security",
   "track": "Cloud-native",
   "difficulty": "advanced",
-  "estimate": "15 min",
+  "estimate": "20 min",
   "brief": "**Ticket:** audit a Deployment. Find the most dangerous container setting.",
-  "theory": "## Kubernetes security\nApply the Pod Security 'restricted' profile: no privileged containers, runAsNonRoot, no privilege escalation, read-only fs, drop capabilities, resource limits, no host namespaces. Enforce with Kyverno/OPA at admission.",
+  "theory": "## What it is\nKubernetes Security is configuring workloads and the cluster so a compromised pod\ncannot take over the node or neighbours. The single most dangerous pod setting is\n`securityContext.privileged: true`.\n\n## How it works\nA **privileged** container effectively has root on the host node - it can access\ndevices and escape to the underlying machine. Other risky settings:\n`allowPrivilegeEscalation`, running as root, host namespaces, and no resource\nlimits. Admission controllers (OPA/Gatekeeper, Kyverno) can block such pods at\ndeploy time.\n\n## In the real world\n**Tesla (2018)** had its Kubernetes dashboard left open and attackers ran\ncryptomining in the cluster. Misconfigured `securityContext` and exposed\ndashboards are repeat offenders, so cluster hardening is core cloud-native AppSec.\n\n## How to prevent it\nEnforce a restricted Pod Security Standard: no `privileged`, no privilege\nescalation, run as non-root, drop capabilities, set resource limits, and use\nadmission policies to reject non-compliant pods.",
   "worked_example": "```yaml\nsecurityContext:\n  privileged: true    # CRITICAL finding\n```",
   "knowledge_check": [
     {
@@ -33,16 +33,17 @@
     }
   ],
   "investigation": {
-    "intro": "Audit the insecure Deployment with the validator.",
+    "intro": "Compare insecure vs hardened Deployments and the admission policy that would block the bad pod.",
     "steps": [
-      "```bash\ncd /workspaces/examto/container-k8s-lab\npython3 -m unittest discover -v\n```",
-      "The tests show the validator flagging the insecure pod (privileged, host-network, run-as-root).",
-      "Read manifests/insecure/deployment.yaml - the most dangerous setting is the answer."
+      "Compare the insecure and hardened Deployment manifests:\n```bash\ncd /workspaces/examto/container-k8s-lab\ncat manifests/insecure/deployment.yaml\ncat manifests/secure/deployment.yaml\n```\nNote the insecure one's `securityContext` settings.",
+      "Run the manifest validator tests (they contrast insecure vs secure):\n```bash\npython3 -m unittest discover -v\n```",
+      "Look at the admission policy that would BLOCK a bad pod in a real cluster:\n```bash\nls policies/ && cat policies/kyverno-require-nonroot.yaml\n```",
+      "Capture: which container `securityContext` setting is CRITICAL? (one word - full host access)."
     ],
     "hints": [
-      "It gives the container full host access.",
-      "securityContext: privileged: true.",
-      "privileged."
+      "Look for the setting that grants host-level access.",
+      "It is a boolean set to true in the insecure manifest.",
+      "One word: privileged."
     ]
   },
   "capture": {

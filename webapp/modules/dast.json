@@ -4,9 +4,9 @@
   "title": "DAST",
   "track": "DevSecOps",
   "difficulty": "core",
-  "estimate": "15 min",
+  "estimate": "20 min",
   "brief": "**Ticket:** confirm a vulnerability on the running app, not just in code.",
-  "theory": "## DAST\nAttacks the **running** app to confirm real exploitability. Tool: **OWASP ZAP**. Finds runtime/config issues SAST can't; needs the app up.",
+  "theory": "## What it is\nDAST (Dynamic Application Security Testing) tests a **running** application from\nthe outside, like an attacker - no source needed. It sends crafted requests and\njudges the app by its responses.\n\n## How it works\nA DAST tool crawls the app and fires payloads: XSS strings, SQLi probes, header\nchecks, auth bypasses. If a `<script>` payload reflects unencoded, or an error\nleaks a stack trace, it reports the finding. It catches runtime and config issues\nSAST cannot see, but can miss flaws hidden behind auth or complex flows.\n\n## In the real world\nOWASP **ZAP** and Burp Suite are the standard DAST tools; teams run a ZAP baseline\nscan in CI against a deployed test environment. \"Runs DAST against staging\" is a\ncommon DevSecOps pipeline stage.\n\n## How to prevent it\n(DAST is a detection control.) Run it against a staging deploy in CI, triage and\nfix findings, and combine it with SAST (code view) and SCA (dependencies) for\nfull coverage.",
   "worked_example": "```\n$ curl \"https://x/greet?name=<script>alert(1)</script>\"\n<h1>Hello <script>alert(1)</script></h1>   # live XSS confirmed\n```",
   "knowledge_check": [
     {
@@ -33,16 +33,17 @@
     }
   ],
   "investigation": {
-    "intro": "Attack the live app and confirm reflected XSS.",
+    "intro": "Probe a live app by hand the way a DAST scanner does, then run the real ZAP baseline.",
     "steps": [
-      "```bash\ncd /workspaces/examto/appsec-lab\npython3 -m venv .venv 2>/dev/null; . .venv/bin/activate 2>/dev/null; pip install -q -r requirements.txt\npython3 run_server.py\n```",
-      "In a second terminal:\n```bash\ncurl -s \"http://127.0.0.1:5000/greet?name=<script>alert(1)</script>\"\n```",
-      "The script is reflected unescaped - a confirmed live vuln. Name it (3 letters) for the task."
+      "Start the app in the background and probe it like a scanner - first a reflected XSS probe:\n```bash\ncd /workspaces/examto/appsec-lab\n. .venv/bin/activate 2>/dev/null\npython3 run_server.py &\nsleep 2\ncurl -s \"http://127.0.0.1:5000/greet?name=<script>alert(1)</script>\"\n```\nThe payload reflecting unencoded is a confirmed finding.",
+      "Probe the response headers for misconfiguration (same thing a DAST passive scan does):\n```bash\ncurl -s -D - http://127.0.0.1:5000/health -o /dev/null\n```",
+      "Run the real OWASP ZAP baseline scan against the live app:\n```bash\nbash tools/run_zap_baseline.sh\n```",
+      "Capture: reflecting a `<script>` payload live is which OWASP flaw? (3 letters)."
     ],
     "hints": [
-      "Reflected script in the page.",
-      "Cross-Site Scripting.",
-      "xss."
+      "DAST attacks the running app from outside.",
+      "A reflected script tag is the finding.",
+      "Three letters: XSS."
     ]
   },
   "capture": {

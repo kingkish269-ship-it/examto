@@ -4,10 +4,10 @@
   "title": "Crypto & Secrets",
   "track": "OWASP Top 10",
   "difficulty": "core",
-  "estimate": "15 min",
+  "estimate": "20 min",
   "brief": "**Ticket:** a developer left a signing key in the source and stored passwords with MD5. Find the leaked secret and recover it.",
-  "theory": "## Cryptographic failures (OWASP A02)\nPasswords need a **salted, slow** hash (bcrypt/scrypt/argon2/PBKDF2) \u2014 never MD5/SHA1. **Secrets** belong in env vars or a vault, never in code; rotate anything ever committed.",
-  "worked_example": "```\n$ grep -rn \"API_KEY\" .\nconfig.py:3:API_KEY = \"sk-live-abc123\"   # committed secret \u2014 rotate it!\n```",
+  "theory": "## What it is\nCryptographic Failures (OWASP A02) is protecting sensitive data badly: weak or\nunsalted password hashes, secrets hardcoded in source, or data sent/stored\nwithout proper encryption.\n\n## How it works\nHashing passwords with fast, unsalted MD5/SHA-1 means two users with the same\npassword get the same hash, and attackers crack them with rainbow tables at\nbillions of guesses per second. Secrets committed in code leak to anyone with\nrepo access. Missing TLS or `verify=False` exposes data in transit.\n\n## In the real world\nThe **Adobe breach (2013)** exposed ~150 million credentials stored with reversible,\npattern-revealing encryption. **LinkedIn (2012)** leaked 6.5 million unsalted SHA-1\npassword hashes that were cracked en masse. These are textbook crypto failures.\n\n## How to prevent it\nHash passwords with a slow, salted algorithm (**bcrypt/argon2/scrypt**). Keep\nsecrets in environment variables or a vault, never in code. Enforce TLS and never\ndisable certificate verification.",
+  "worked_example": "```\n$ grep -rn \"API_KEY\" .\nconfig.py:3:API_KEY = \"sk-live-abc123\"   # committed secret — rotate it!\n```",
   "knowledge_check": [
     {
       "q": "Passwords need a salted, ___ hash",
@@ -33,16 +33,17 @@
     }
   ],
   "investigation": {
-    "intro": "Hunt the source for a hardcoded secret.",
+    "intro": "Prove the password hashes are unsalted and find a secret sitting in the source.",
     "steps": [
-      "```bash\ncd /workspaces/examto/appsec-lab\npython3 -m venv .venv 2>/dev/null; . .venv/bin/activate 2>/dev/null; pip install -q -r requirements.txt\n# (no server needed for this one)\n```",
-      "Search the source for the committed secret:\n```bash\ncd /workspaces/examto/appsec-lab\ngrep -n \"s3cr3t\" vulnerable_app/app.py\n```",
-      "The grep prints the hardcoded signing key \u2014 that is what you recover."
+      "**Start the lab app** (leave it running; open a *second* terminal tab for the attack):\n```bash\ncd /workspaces/examto/appsec-lab\npython3 -m venv .venv 2>/dev/null; . .venv/bin/activate; pip install -q -r requirements.txt\n# (server optional for this room)\n```",
+      "Prove the hashes are unsalted - the test shows two users with the same password share a hash:\n```bash\ncd /workspaces/examto/appsec-lab\n. .venv/bin/activate 2>/dev/null\npython3 -m pytest tests/test_exploits.py::test_weak_password_hash_is_unsalted -q\n```",
+      "Find the hardcoded secret sitting in the application source (exactly what a reviewer or a secret scanner catches):\n```bash\ngrep -n \"s3cr3t\" vulnerable_app/app.py\n```",
+      "Takeaway and capture: the correct password-hashing choice is a slow salted algorithm - name the family (bcrypt/argon2/scrypt) as directed by the room's capture task."
     ],
     "hints": [
-      "Secrets are often named 'key', 'secret', or 'token'.",
-      "Grep the app.py file.",
-      "The value starts with s3cr3t-..."
+      "Same password -> same hash means no per-user salt.",
+      "Grep the source for the obvious fake secret string.",
+      "The fix is a slow, salted password hash."
     ]
   },
   "capture": {

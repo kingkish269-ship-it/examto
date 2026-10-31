@@ -4,9 +4,9 @@
   "title": "Secure Code Review",
   "track": "Process",
   "difficulty": "core",
-  "estimate": "15 min",
+  "estimate": "20 min",
   "brief": "**Ticket:** review a service like a pull request and find the dangerous sinks.",
-  "theory": "## Secure code review\nHunt for untrusted **source** reaching a dangerous **sink**: SQL concatenation, `subprocess shell=True`, `verify=False`, hardcoded secrets, `pickle.loads`, path joins, unescaped HTML. For each: finding, impact, fix.",
+  "theory": "## What it is\nSecure Code Review is reading code specifically to find security bugs - the\nmanual counterpart to automated scanning. A reviewer hunts for dangerous **sinks**\nand traces whether untrusted input reaches them.\n\n## How it works\nYou grep/skim for high-risk patterns: `shell=True`, string-concatenated SQL,\n`pickle.loads`, `hashlib.md5`, `verify=False`, `eval`, and templating that\nbypasses auto-escaping. For each hit you ask: does user input reach this, and\nwhat check stands in between? Human review catches logic and authorization flaws\nthat tools miss.\n\n## In the real world\nSecurity review of pull requests is a standard gate in mature teams and a daily\ntask in AppSec roles. Being able to open a diff and name the vulnerable line - and\nthe fix - is exactly what interviewers test.\n\n## How to prevent it\nMake review a required step: a checklist of dangerous sinks, SAST wired into CI to\nflag the easy cases automatically, and a culture where risky patterns are\nrejected in code review.",
   "worked_example": "```python\nsubprocess.run(cmd, shell=True)   # command injection\nrequests.get(url, verify=False)    # TLS off\n```",
   "knowledge_check": [
     {
@@ -27,16 +27,17 @@
     }
   ],
   "investigation": {
-    "intro": "Grep the lab app for dangerous sinks, then read them in context.",
+    "intro": "Review this app the way you would a pull request - hunt the dangerous sinks by hand.",
     "steps": [
-      "```bash\ncd /workspaces/examto/appsec-lab\ngrep -nE \"shell=True|verify=False|pickle.loads|hashlib.md5\" vulnerable_app/app.py\n```",
-      "Open vulnerable_app/app.py and read each hit; the app pairs the vulnerable and fixed branch.",
-      "The subprocess line is your answer for the task."
+      "Scan the vulnerable app for the classic dangerous sinks a reviewer looks for first:\n```bash\ncd /workspaces/examto/appsec-lab\ngrep -nE \"shell=True|verify=False|pickle.loads|hashlib.md5|\\\" \\+ |' \\+ \" vulnerable_app/app.py\n```",
+      "For each hit, open the surrounding code and trace whether user input reaches it and what check (if any) is in between:\n```bash\nsed -n '1,120p' vulnerable_app/app.py\n```",
+      "Write down, per finding: the sink, the source that reaches it, the vulnerability class, and the one-line fix. That note is your interview talking point.",
+      "Capture: `subprocess.run(cmd, shell=True)` on user input is which injection? (two words)."
     ],
     "hints": [
-      "Look at the /diag route.",
-      "It builds a shell command from user input.",
-      "command injection."
+      "shell=True + user input is the giveaway.",
+      "The OS runs the command.",
+      "Two words: command injection."
     ]
   },
   "capture": {

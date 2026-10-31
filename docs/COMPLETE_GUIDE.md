@@ -46,10 +46,10 @@ Work them top to bottom. Left pane = content; right pane = terminal where you do
 | Section | What you do |
 |---|---|
 | 1. Brief | Two-line "why this matters". |
-| 2. Theory | The concept, the vulnerable pattern, and the fix. The part you study. |
+| 2. Theory | Four parts — What it is, How it works, In the real world (real breaches), How to prevent it. The part you study. |
 | 3. Worked example | A fully worked command/response so you see what "good" looks like. |
 | 4. Knowledge check | Multiple-choice / short answers, graded instantly. Get them right to pass. |
-| 5. Investigation | Hands-on terminal steps: start the lab app, send requests, read output. |
+| 5. Investigation | A complete hands-on lab: exploit the flaw, apply the fix, then re-test to confirm it's closed. |
 | 6. Capture | Enter the flag / one-word answer you derived. Graded against a hash (never stored in plaintext). |
 
 A room is complete when all six sections are done. Progress saves locally in the Codespace.

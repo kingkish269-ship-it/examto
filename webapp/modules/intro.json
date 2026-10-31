@@ -4,10 +4,10 @@
   "title": "Intro to AppSec",
   "track": "Foundations",
   "difficulty": "beginner",
-  "estimate": "15 min",
+  "estimate": "20 min",
   "brief": "**Your first step.** Before tools or exploits, you need one mental model of how web apps break. This room gives it to you and checks you understood it.",
-  "theory": "## How a web app works\nFour parts: **client** (browser), **server** (your code), **database**, and services it calls.\n\nA request has a method, path, headers, body. The server reads this input and may pass it to a **sink** (a DB query, a shell, the HTML page, a file).\n\n## The one idea behind almost every web vuln\n> Untrusted input reaches a dangerous operation without the right check in between.\n\n- **Source** = where untrusted input enters (URL, form, header, cookie).\n- **Sink** = the dangerous operation it reaches.\n\n## The golden rule\n**Never trust input from the client** \u2014 even if your own app produced it. The attacker controls the whole request. All real checks happen on the server.",
-  "worked_example": "A quick look at a request and response:\n```\n$ curl -s -D - https://example.com -o /dev/null\nHTTP/2 200\ncontent-type: text/html\n...\n```\nThe status line + headers are the response metadata. Notice there is no\nContent-Security-Policy by default \u2014 that is a finding you will meet in the\nMisconfiguration room.",
+  "theory": "## What it is\nApplication security (AppSec) is the practice of finding and fixing the ways an\nattacker can abuse an application through its normal inputs. Before any tool or\nexploit, you need one mental model of *how* apps break.\n\n## How it works\nA web app has four parts: the **client** (browser/curl/mobile), your **server**\ncode, a **database**, and other services it calls. Every request carries a\nmethod, a path, headers, and a body. Your server reads that input and eventually\npasses it to a **sink**: a database query, a shell command, the HTML page, a\nfile path, or another API.\n\n> The one idea behind almost every web vulnerability: **untrusted input reaches a\n> dangerous operation without the right check in between.**\n\n- **Source** = where attacker-controlled input enters (URL, form, header, cookie).\n- **Sink** = the dangerous operation it reaches.\nTrace input from source to sink and you have found the bug.\n\n## In the real world\nEvery breach you read about is a version of this. Capital One (2019) was input\nreaching a cloud-metadata call (SSRF). TalkTalk (2015) was input reaching a\ndatabase query (SQLi). The job of an AppSec engineer is to spot the\nsource-to-sink path in code and in running systems before an attacker does.\n\n## How to prevent it\n**Never trust input from the client** - even input your own app produced earlier.\nThe attacker controls the whole request. Validate and encode at every trust\nboundary, and run every real security check on the server, never in the browser.",
+  "worked_example": "A quick look at a request and response:\n```\n$ curl -s -D - https://example.com -o /dev/null\nHTTP/2 200\ncontent-type: text/html\n...\n```\nThe status line + headers are the response metadata. Notice there is no\nContent-Security-Policy by default — that is a finding you will meet in the\nMisconfiguration room.",
   "knowledge_check": [
     {
       "q": "Data arriving from the client should be treated as:",
@@ -44,16 +44,17 @@
     }
   ],
   "investigation": {
-    "intro": "Bring up a web app and look at it as a black box over HTTP.",
+    "intro": "Bring up a real app and look at it as a black box over HTTP - find the source and the sink you will exploit in later rooms.",
     "steps": [
-      "Start the lab app:\n```bash\ncd /workspaces/examto/appsec-lab\npython3 -m venv .venv 2>/dev/null; . .venv/bin/activate 2>/dev/null; pip install -q -r requirements.txt\npython3 run_server.py               # leave this running\n```",
-      "In the terminal on the right, in a second shell, hit the app:\n```bash\ncurl -s http://127.0.0.1:5000/health\ncurl -s \"http://127.0.0.1:5000/greet?name=Kiro\"\n```",
-      "Notice the server echoes your input. Ask yourself: what is the **source** here, and what **sink** does it reach? (You will exploit exactly this in the XSS room.)"
+      "**Start the lab app** (leave it running; open a *second* terminal tab for the attack):\n```bash\ncd /workspaces/examto/appsec-lab\npython3 -m venv .venv 2>/dev/null; . .venv/bin/activate; pip install -q -r requirements.txt\npython3 run_server.py\n```",
+      "In a second terminal, hit the app and watch it echo your input straight back:\n```bash\ncurl -s http://127.0.0.1:5000/health\ncurl -s \"http://127.0.0.1:5000/greet?name=Kiro\"\n```",
+      "Look at the raw response line and headers of a real site so you know what request/response metadata looks like:\n```bash\ncurl -s -D - https://example.com -o /dev/null\n```",
+      "Now reason about it: in `/greet?name=Kiro`, the **source** is the `name` query parameter and the **sink** is the HTML page the server builds. That exact path is the XSS bug you will exploit in room 5."
     ],
     "hints": [
-      "The source is the 'name' query parameter.",
-      "The sink is the HTML page the server builds.",
-      "Remember the golden rule for the task below."
+      "The source is the 'name' query parameter you control.",
+      "The sink is the HTML the server builds from it.",
+      "The golden rule answers the capture: never trust the client."
     ]
   },
   "capture": {

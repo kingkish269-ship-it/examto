@@ -4,9 +4,9 @@
   "title": "Security Misconfiguration",
   "track": "OWASP Top 10",
   "difficulty": "core",
-  "estimate": "12 min",
+  "estimate": "20 min",
   "brief": "**Ticket:** the app ships without security headers. Identify the header that stops MIME sniffing.",
-  "theory": "## Security misconfiguration (OWASP A05)\nSend security headers on every response: `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Content-Security-Policy`, `Referrer-Policy`. Return generic errors; never run debug mode on a reachable server.",
+  "theory": "## What it is\nSecurity Misconfiguration (OWASP A05) is being insecure by default: missing\nsecurity headers, verbose error pages, default credentials, unnecessary features\nleft on, or storage left open to the world.\n\n## How it works\nA response with no `Content-Security-Policy`, `X-Content-Type-Options`, or\n`X-Frame-Options` leaves the app open to clickjacking, MIME sniffing, and weaker\nXSS defence. Stack traces shown to users leak internal paths and versions.\nDefault admin passwords and open cloud buckets need no \"exploit\" at all.\n\n## In the real world\nThousands of publicly readable **Amazon S3 buckets** have leaked customer data\nsimply because the default/chosen configuration was \"public\". Misconfiguration is\nconsistently one of the most common findings in real assessments because it is\neverywhere and easy to miss.\n\n## How to prevent it\nHarden by default: send security headers, disable debug/verbose errors in\nproduction, change defaults, remove unused features, and review cloud resource\npermissions. Bake these checks into CI so they cannot regress.",
   "worked_example": "```\n$ curl -s -D - https://good.example/ -o /dev/null | grep -i content-security\ncontent-security-policy: default-src 'self'\n```",
   "knowledge_check": [
     {
@@ -33,16 +33,17 @@
     }
   ],
   "investigation": {
-    "intro": "Compare the headers the lab app sends in vulnerable vs secure mode.",
+    "intro": "Compare the response headers of the insecure app versus the hardened one.",
     "steps": [
-      "```bash\ncd /workspaces/examto/appsec-lab\npython3 -m venv .venv 2>/dev/null; . .venv/bin/activate 2>/dev/null; pip install -q -r requirements.txt\npython3 run_server.py               # leave this running\n```",
-      "In a second terminal, look at the headers (vulnerable \u2014 note what's missing):\n```bash\ncurl -s -D - http://127.0.0.1:5000/health -o /dev/null\n```",
-      "Restart the app with `LAB_SECURE=1 python3 run_server.py` and look again \u2014 the security headers now appear. The one with value `nosniff` is your answer."
+      "**Start the lab app** (leave it running; open a *second* terminal tab for the attack):\n```bash\ncd /workspaces/examto/appsec-lab\npython3 -m venv .venv 2>/dev/null; . .venv/bin/activate; pip install -q -r requirements.txt\npython3 run_server.py\n```",
+      "In a second terminal, look at the insecure response headers - note there is no CSP and no nosniff:\n```bash\ncurl -s -D - \"http://127.0.0.1:5000/health\" -o /dev/null\n```",
+      "**Apply the fix and re-test.** Stop the server (Ctrl+C) and restart it in secure mode, then run the SAME attack again:\n```bash\nLAB_SECURE=1 python3 run_server.py\n```",
+      "Re-check the headers in secure mode and confirm the protections are now present:\n```bash\ncurl -s -D - \"http://127.0.0.1:5000/health\" -o /dev/null | grep -iE \"content-security|x-content-type|x-frame|referrer\"\n```\nThe capture asks you to name a header that was missing before."
     ],
     "hints": [
-      "It starts with X-Content-...",
-      "Its value is 'nosniff'.",
-      "Submit the header name, lowercase is fine."
+      "Use curl -D - to dump response headers.",
+      "Look for Content-Security-Policy and X-Content-Type-Options.",
+      "Secure mode adds the headers the insecure mode lacked."
     ]
   },
   "capture": {
