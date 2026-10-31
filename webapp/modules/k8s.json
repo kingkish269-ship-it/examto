@@ -1,0 +1,54 @@
+{
+  "order": 22,
+  "id": "k8s",
+  "title": "Kubernetes Security",
+  "track": "Cloud-native",
+  "difficulty": "advanced",
+  "estimate": "15 min",
+  "brief": "**Ticket:** audit a Deployment. Find the most dangerous container setting.",
+  "theory": "## Kubernetes security\nApply the Pod Security 'restricted' profile: no privileged containers, runAsNonRoot, no privilege escalation, read-only fs, drop capabilities, resource limits, no host namespaces. Enforce with Kyverno/OPA at admission.",
+  "worked_example": "```yaml\nsecurityContext:\n  privileged: true    # CRITICAL finding\n```",
+  "knowledge_check": [
+    {
+      "q": "Enforcing policy at ___ rejects insecure pods, not just detects them",
+      "type": "choice",
+      "choices": [
+        "admission",
+        "runtime logs",
+        "the firewall",
+        "the registry"
+      ],
+      "answer_sha256": "6a6ba702490a3747917518200e696dead01e32cbdcdca0dd3ac2bf3568982ab5"
+    },
+    {
+      "q": "runAsNonRoot should be set to:",
+      "type": "choice",
+      "choices": [
+        "true",
+        "false",
+        "root",
+        "0"
+      ],
+      "answer_sha256": "b5bea41b6c623f7c09f1bf24dcae58ebab3c0cdd90ad966bc43a45b44867e12b"
+    }
+  ],
+  "investigation": {
+    "intro": "Audit the insecure Deployment with the validator.",
+    "steps": [
+      "```bash\ncd /workspaces/examto/container-k8s-lab\npython3 -m unittest discover -v\n```",
+      "The tests show the validator flagging the insecure pod (privileged, host-network, run-as-root).",
+      "Read manifests/insecure/deployment.yaml - the most dangerous setting is the answer."
+    ],
+    "hints": [
+      "It gives the container full host access.",
+      "securityContext: privileged: true.",
+      "privileged."
+    ]
+  },
+  "capture": {
+    "task": "**Name the worst setting.** Which container securityContext setting is CRITICAL? (one word)",
+    "hint": "Full host access.",
+    "placeholder": "answer",
+    "answer_sha256": "5b56570fc818acea65eb7a740b4c95bbf7ebc5fb83f2f016924d10cacfae5dff"
+  }
+}

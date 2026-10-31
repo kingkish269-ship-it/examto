@@ -1,0 +1,54 @@
+{
+  "order": 19,
+  "id": "cicd",
+  "title": "CI/CD Pipeline Security",
+  "track": "DevSecOps",
+  "difficulty": "core",
+  "estimate": "15 min",
+  "brief": "**Ticket:** the pipeline must block an insecure release. Run the gate and read its exit code.",
+  "theory": "## CI/CD security\nSecurity runs in the pipeline: secret scan -> SAST -> SCA/container scan -> a **gate** that applies policy and returns an exit code (0 continue, non-zero block). Make gates fair: start at HIGH, allowlist accepted risks.",
+  "worked_example": "```\n$ run_gate --fail-on HIGH ; echo $?\nDevSecOps gate: FAIL\n1\n```",
+  "knowledge_check": [
+    {
+      "q": "A pipeline gate blocks the build by returning a ___ exit code",
+      "type": "choice",
+      "choices": [
+        "non-zero",
+        "zero",
+        "negative",
+        "random"
+      ],
+      "answer_sha256": "cdfe9ddcdb4eb9bb26e41133e75f74fa3bb26436bd76368fb3be68d15bf06eb9"
+    },
+    {
+      "q": "A fair gate starts by failing on ___ severity",
+      "type": "choice",
+      "choices": [
+        "HIGH",
+        "LOW",
+        "INFO",
+        "any"
+      ],
+      "answer_sha256": "6ef7c9b15ecdd69083724b84cfdc2100351963488b51b4ea2fcbddf493fbec94"
+    }
+  ],
+  "investigation": {
+    "intro": "Run the gate on findings that include a CRITICAL and a leaked secret.",
+    "steps": [
+      "```bash\ncd /workspaces/examto/devsecops-lab\npython3 -m gate.run_gate --semgrep samples/semgrep_sample.json --trivy samples/trivy_sample.json --gitleaks samples/gitleaks_sample.json --fail-on HIGH\necho \"exit code: $?\"\n```",
+      "It prints FAIL and an exit code.",
+      "That exit code is how CI knows to stop - it's your answer."
+    ],
+    "hints": [
+      "Zero means continue; what means stop?",
+      "A single digit.",
+      "1."
+    ]
+  },
+  "capture": {
+    "task": "**Read the gate.** What exit code does the gate return when it blocks the release? (a number)",
+    "hint": "Non-zero; one digit.",
+    "placeholder": "answer",
+    "answer_sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+  }
+}

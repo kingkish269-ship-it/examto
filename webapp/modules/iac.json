@@ -1,0 +1,54 @@
+{
+  "order": 20,
+  "id": "iac",
+  "title": "IaC Security (Terraform)",
+  "track": "Cloud-native",
+  "difficulty": "core",
+  "estimate": "15 min",
+  "brief": "**Ticket:** scan the Terraform before apply. Find the rule that flags a public database.",
+  "theory": "## IaC security\nScan Terraform/CloudFormation for misconfig before deploy: public S3, open security groups, public/unencrypted DBs, IAM wildcards. Tools: Checkov, tfsec. Your cloud knowledge, shifted left.",
+  "worked_example": "```\n$ checkov -d terraform/\nFAILED CKV_AWS_24  security group allows 0.0.0.0/0 to port 22\n```",
+  "knowledge_check": [
+    {
+      "q": "IaC scanning catches cloud misconfig ___ deploy",
+      "type": "choice",
+      "choices": [
+        "before",
+        "after",
+        "during an incident",
+        "never"
+      ],
+      "answer_sha256": "6db7d803e74f1ffa7d8f5adc0bf95b3e15bf4c8373fffadf546227cc6c6742cb"
+    },
+    {
+      "q": "A free IaC scanner is:",
+      "type": "choice",
+      "choices": [
+        "Checkov",
+        "nmap",
+        "Wireshark",
+        "curl"
+      ],
+      "answer_sha256": "fad3face6253eb0f73f98f4a5a57b76f969b213c9e3a411e4c52f1317ca72dcf"
+    }
+  ],
+  "investigation": {
+    "intro": "Scan the insecure Terraform plan and read the rule ids.",
+    "steps": [
+      "```bash\ncd /workspaces/examto/iac-security-lab\npython3 scan.py terraform/sample_plan_insecure.json\n```",
+      "Read the findings; one rule flags the publicly accessible RDS instance.",
+      "Real tool: `tools-lab/` -> `checkov -d iac-security-lab/terraform/insecure`."
+    ],
+    "hints": [
+      "The rule id starts with rds-.",
+      "Public database.",
+      "rds-public."
+    ]
+  },
+  "capture": {
+    "task": "**Name the rule.** Which rule id flags the publicly accessible database?",
+    "hint": "rds-___ .",
+    "placeholder": "answer",
+    "answer_sha256": "0bcd3ec429b1d2ba6faea25ff8f50bf9aed58367cc2b5ee255041c72e4d6e7a7"
+  }
+}

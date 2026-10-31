@@ -1,0 +1,54 @@
+{
+  "order": 16,
+  "id": "dast",
+  "title": "DAST",
+  "track": "DevSecOps",
+  "difficulty": "core",
+  "estimate": "15 min",
+  "brief": "**Ticket:** confirm a vulnerability on the running app, not just in code.",
+  "theory": "## DAST\nAttacks the **running** app to confirm real exploitability. Tool: **OWASP ZAP**. Finds runtime/config issues SAST can't; needs the app up.",
+  "worked_example": "```\n$ curl \"https://x/greet?name=<script>alert(1)</script>\"\n<h1>Hello <script>alert(1)</script></h1>   # live XSS confirmed\n```",
+  "knowledge_check": [
+    {
+      "q": "DAST tests the app by:",
+      "type": "choice",
+      "choices": [
+        "attacking it while running",
+        "reading its source",
+        "scanning its SBOM",
+        "linting the Dockerfile"
+      ],
+      "answer_sha256": "dad3aa317e782c93438152ec84c2af12521a3276a800fb68ebe8fe6a9ed5e1a2"
+    },
+    {
+      "q": "A free DAST tool is:",
+      "type": "choice",
+      "choices": [
+        "OWASP ZAP",
+        "Bandit",
+        "Checkov",
+        "Syft"
+      ],
+      "answer_sha256": "cf044aa8874354535fcbc1f04740f2f8afd6496f39bdb5279d026aa9c873d294"
+    }
+  ],
+  "investigation": {
+    "intro": "Attack the live app and confirm reflected XSS.",
+    "steps": [
+      "```bash\ncd /workspaces/examto/appsec-lab\npython3 -m venv .venv 2>/dev/null; . .venv/bin/activate 2>/dev/null; pip install -q -r requirements.txt\npython3 run_server.py\n```",
+      "In a second terminal:\n```bash\ncurl -s \"http://127.0.0.1:5000/greet?name=<script>alert(1)</script>\"\n```",
+      "The script is reflected unescaped - a confirmed live vuln. Name it (3 letters) for the task."
+    ],
+    "hints": [
+      "Reflected script in the page.",
+      "Cross-Site Scripting.",
+      "xss."
+    ]
+  },
+  "capture": {
+    "task": "**Name the confirmed vuln.** Reflecting a <script> payload live is which OWASP flaw? (3 letters)",
+    "hint": "Cross-Site Scripting.",
+    "placeholder": "answer",
+    "answer_sha256": "58e0413224af6b6d3505dd1819d02491c34588de7a4dc6a9ad48a8f7e08e2f7b"
+  }
+}
