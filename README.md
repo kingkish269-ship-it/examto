@@ -13,6 +13,10 @@ Hands-on labs for building the practical skills behind senior cloud, product, an
 DevSecOps security roles. Everything uses free, open-source tooling. No paid
 service, cloud account, or subscription is required to start.
 
+> **Not sure where to start?** Follow [`ROADMAP.md`](ROADMAP.md) — the complete
+> ordered path from beginner to job-ready (repo rooms + PortSwigger depth + a real
+> CI/CD pipeline + proof), in 6 phases over ~16 weeks.
+>
 > **Want the whole plan in one place?** Follow [`FINISH_ON_YOUR_OWN.md`](FINISH_ON_YOUR_OWN.md)
 > — a complete, self-grading, start-to-finish playbook (no help needed).
 >
