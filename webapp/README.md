@@ -24,6 +24,18 @@ If you run it outside the Codespace, install the deps first:
 pip install -r webapp/requirements.txt
 ```
 
+## Terminal shows "[terminal closed]"?
+
+The in-page terminal needs `flask-sock`. Install it once and restart:
+
+```bash
+pip install flask-sock simple-websocket
+python3 webapp/app.py      # then reload the browser tab
+```
+
+Either way you can always use the **VS Code integrated terminal** (press
+**Ctrl+`**) for the objective commands — the left panel still guides you.
+
 ## Safety
 
 The right pane is a real shell on your own Codespace — keep the forwarded port

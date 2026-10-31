@@ -106,7 +106,7 @@ PAGE = """
     <div class="body" id="content">Loading…</div>
   </div>
   <div id="right">
-    <div class="termbar">Terminal — your Codespace machine. Run the objective commands here.</div>
+    <div class="termbar">Terminal — your Codespace machine. (If it doesn't connect, use the VS Code terminal with Ctrl+` and run the commands there.)</div>
     <div id="termwrap"><div id="terminal"></div></div>
   </div>
 </div>
@@ -159,17 +159,30 @@ async function submit(id){
   else{res.className='result fail';res.textContent='Not correct — re-read the briefing and try again.';}
 }
 // ---- terminal ----
+const TERM_ENABLED = {{ 'true' if term_enabled else 'false' }};
+function help(msg){
+  return '<div style="padding:14px;color:#adbac7;font-size:13px;line-height:1.7">'
+    + '<b style="color:#f0883e">'+msg+'</b><br><br>'
+    + 'Easiest fix — use the built-in VS Code terminal instead:<br>'
+    + 'press <b>Ctrl+`</b> (or Terminal menu), and run the objective commands there.<br><br>'
+    + 'To enable this in-page terminal: in a terminal run<br>'
+    + '<code>pip install flask-sock simple-websocket</code><br>'
+    + 'then restart <code>python3 webapp/app.py</code> and reload this page.</div>';
+}
 function initTerm(){
-  if(typeof Terminal==='undefined'){document.getElementById('terminal').innerHTML=
-    '<div style="color:#8b949e;padding:10px">Terminal library did not load. Use the VS Code terminal instead.</div>';return;}
+  const host=document.getElementById('terminal');
+  if(!TERM_ENABLED){ host.innerHTML=help("The in-page terminal backend (flask-sock) isn't installed."); return; }
+  if(typeof Terminal==='undefined'){ host.innerHTML=help("The terminal display library didn't load (no internet for the CDN?)."); return; }
   const term=new Terminal({fontSize:13,theme:{background:'#000000'}});
   const fit=new FitAddon.FitAddon(); term.loadAddon(fit);
-  term.open(document.getElementById('terminal')); fit.fit();
+  term.open(host); fit.fit();
   const proto=location.protocol==='https:'?'wss':'ws';
+  let opened=false;
   const ws=new WebSocket(proto+'://'+location.host+'/ws/term');
-  ws.onopen=()=>{ term.onData(d=>ws.send(d)); };
+  ws.onopen=()=>{ opened=true; term.onData(d=>ws.send(d)); term.write('connected. type commands here.\\r\\n'); };
   ws.onmessage=e=>term.write(e.data);
-  ws.onclose=()=>term.write('\\r\\n[terminal closed]\\r\\n');
+  ws.onclose=()=>{ if(!opened){ host.innerHTML=help("Couldn't connect to the terminal backend."); }
+                   else { term.write('\\r\\n[session ended — reload the page to restart]\\r\\n'); } };
   window.addEventListener('resize',()=>fit.fit());
 }
 load(); initTerm();
@@ -179,7 +192,7 @@ load(); initTerm();
 
 @app.get("/")
 def index():
-    return render_template_string(PAGE)
+    return render_template_string(PAGE, term_enabled=_HAS_SOCK)
 
 
 @app.get("/api/rooms")
